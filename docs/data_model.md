@@ -5,7 +5,7 @@ This document outlines the proposed data structures for the Packing List applica
 These are defined using Zod schemas to enable runtime validation.
 
 ```typescript
-import { z } from 'zod';
+import { z } from "zod";
 
 // Represents a reusable tag (e.g., "Weather: Warm", "Trip Type: Business", "Travel Mode: Carry-on")
 const TagSchema = z.object({
@@ -68,4 +68,4 @@ const CurrentPackingListSchema = z.object({
 // Example usage for parsing/validation:
 // const parsedTag = TagSchema.parse({ id: "...", name: "..." });
 // const parsedList = CurrentPackingListSchema.parse(dataFromLocalStorage);
-``` 
+```

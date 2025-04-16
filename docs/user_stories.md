@@ -14,4 +14,4 @@
 7.  **View Suggested Luggage:** As a user, I want the app to suggest appropriate luggage based on my trip's length and travel mode, so that I know which bags to use.
 8.  **Mark Item as Packed:** As a user actively packing, I want to easily mark items on my generated list as packed, so that I can track my progress and ensure I don't forget anything.
 9.  **Add One-off Item:** As a user actively packing, I want to add a specific item to my current generated list, even if it wasn't initially suggested by the rules, so that I can accommodate unique or last-minute needs for a particular trip.
-10. **View Packing Progress:** As a user actively packing, I want to see a clear overview of which items are packed and which are remaining on my current list, so that I know what still needs to be done. 
+10. **View Packing Progress:** As a user actively packing, I want to see a clear overview of which items are packed and which are remaining on my current list, so that I know what still needs to be done.
