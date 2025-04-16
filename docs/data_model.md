@@ -7,7 +7,8 @@ These are defined using Zod schemas to enable runtime validation.
 ```typescript
 import { z } from "zod";
 
-// Represents a reusable tag (e.g., "Weather: Warm", "Trip Type: Business", "Travel Mode: Carry-on")
+// Represents a predefined, centrally managed tag used for categorization and rule logic.
+// Examples: "Weather: Warm", "Trip Type: Business", "Travel Mode: Carry-on"
 const TagSchema = z.object({
   id: z.string().uuid(), // Assuming UUIDs for IDs
   name: z.string().min(1), // Enforce non-empty name
@@ -26,7 +27,8 @@ const ItemSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
   categoryId: z.string().uuid().nullable().optional(), // Optional foreign key
-  tagIds: z.array(z.string().uuid()), // Array of foreign keys referencing Tag.id
+  tagIds: z.array(z.string().uuid()), // Array of foreign keys referencing predefined Tag.id values
+  // indicating rules (weather, trip type, duration, etc.)
 });
 // Note: Database-level uniqueness for 'name' needs separate handling.
 
@@ -35,7 +37,8 @@ const LuggageSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1),
   capacityDays: z.number().int().positive(), // Must be a positive integer
-  travelModeTagIds: z.array(z.string().uuid()).min(1), // Must have at least one travel mode tag
+  travelModeTagIds: z.array(z.string().uuid()).min(1), // Array of foreign keys referencing predefined Tag.id values
+  // corresponding to travel modes (e.g., "Travel Mode: Carry-on")
 });
 // Note: Database-level uniqueness for 'name' needs separate handling.
 

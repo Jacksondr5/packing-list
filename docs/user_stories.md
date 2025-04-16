@@ -5,7 +5,7 @@
 1.  **Add Item:** As a user, I want to add new packable items to the system, including details like name and relevant categories (e.g., clothing, toiletries, electronics), so that they are available for future packing lists.
 2.  **Edit Item:** As a user, I want to edit the details of existing items (name, categories, tags) so that I can keep my master item list accurate and organized.
 3.  **Delete Item:** As a user, I want to remove items from the master list that I no longer own or need, so that my item list remains relevant.
-4.  **Define Item Rules:** As a user, I want to define rules or associate tags (e.g., 'business', 'personal', 'warm', 'cold', 'short trip', 'long trip', 'carry-on only') with each item, so that the app can automatically suggest relevant items when I generate a specific packing list.
+4.  **Define Item Rules:** As a user, I want to define rules by **selecting relevant predefined tags** (representing attributes like 'Trip Type: Business', 'Weather: Warm', 'Duration: Per Day', etc.) for each item, so that the app can automatically suggest relevant items when I generate a specific packing list.
 
 ## List Generation & Usage
 
