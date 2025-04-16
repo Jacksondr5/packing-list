@@ -1,5 +1,8 @@
-import { postRouter } from "~/server/api/routers/post";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { tagRouter } from "./routers/tag";
+import { categoryRouter } from "./routers/category";
+import { itemRouter } from "./routers/item";
+import { luggageRouter } from "./routers/luggage";
 
 /**
  * This is the primary router for your server.
@@ -7,7 +10,10 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
+  tag: tagRouter,
+  category: categoryRouter,
+  item: itemRouter,
+  luggage: luggageRouter,
 });
 
 // export type definition of API
