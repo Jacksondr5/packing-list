@@ -4,15 +4,14 @@ import { and, eq } from "drizzle-orm";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { luggage, luggageToTravelModeTags } from "../../db/schema";
 import { db } from "../../db";
-import { TravelModeTagIds, isTravelModeTagId } from "~/lib/tags";
+import { isTravelModeTagId } from "~/lib/tags";
 
 // Input schemas for CRUD operations
 const createLuggageSchema = z.object({
   name: z.string().min(1, "Luggage name is required"),
-  capacityDays: z.number().int().positive("Capacity must be a positive number"),
+  capacityDays: z.number().int().min(1, "Capacity must be at least 1 day"),
   travelModeTagIds: z
     .array(z.number().int())
-    .min(1, "At least one travel mode tag is required")
     .refine((ids) => ids.every((id) => isTravelModeTagId(id)), {
       message: "One or more travel mode tag IDs are invalid",
     }),
@@ -21,10 +20,9 @@ const createLuggageSchema = z.object({
 const updateLuggageSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1, "Luggage name is required"),
-  capacityDays: z.number().int().positive("Capacity must be a positive number"),
+  capacityDays: z.number().int().min(1, "Capacity must be at least 1 day"),
   travelModeTagIds: z
     .array(z.number().int())
-    .min(1, "At least one travel mode tag is required")
     .refine((ids) => ids.every((id) => isTravelModeTagId(id)), {
       message: "One or more travel mode tag IDs are invalid",
     }),
