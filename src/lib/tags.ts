@@ -10,6 +10,9 @@ export const TripTypeTagIds = {
   PERSONAL: 2,
 } as const;
 
+export type TripTypeTagId =
+  (typeof TripTypeTagIds)[keyof typeof TripTypeTagIds];
+
 export const WeatherTagIds = {
   WARM: 3,
   COLD: 4,
@@ -17,10 +20,15 @@ export const WeatherTagIds = {
   ANY: 6,
 } as const;
 
+export type WeatherTagId = (typeof WeatherTagIds)[keyof typeof WeatherTagIds];
+
 export const DurationTagIds = {
   BASE: 7,
   PER_DAY: 8,
 } as const;
+
+export type DurationTagId =
+  (typeof DurationTagIds)[keyof typeof DurationTagIds];
 
 export const TravelModeTagIds = {
   CARRY_ON: 9,
@@ -28,6 +36,9 @@ export const TravelModeTagIds = {
   CAR: 11,
   TRAIN: 12,
 } as const;
+
+export type TravelModeTagId =
+  (typeof TravelModeTagIds)[keyof typeof TravelModeTagIds];
 
 // All tag IDs combined
 export const TagIds = {

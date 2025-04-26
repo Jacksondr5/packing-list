@@ -6,7 +6,6 @@ import { PackingListItemSchema } from "./items";
  * Represents the currently active packing list stored in the browser's local storage.
  */
 export const CurrentPackingListSchema = z.object({
-  generatedAt: z.date(), // Timestamp when the list was generated
   tripDetails: z.object({
     destination: z.string().min(1),
     startDate: z.date(),
