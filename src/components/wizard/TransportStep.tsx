@@ -28,7 +28,16 @@ export default function TransportStep({
           className={`hover:bg-accent cursor-pointer transition-colors ${
             selected === mode.value ? "border-primary bg-primary/5" : ""
           }`}
+          role="button"
+          tabIndex={0}
+          aria-pressed={selected === mode.value}
           onClick={() => onSelect(mode.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onSelect(mode.value);
+            }
+          }}
         >
           <CardContent className="py-3">
             <p className="font-medium">{mode.label}</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAction } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,14 @@ export default function DestinationStep({
   const [searching, setSearching] = useState(false);
   const geocode = useAction(api.weather.geocodeCity);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
 
   const handleSearch = (value: string) => {
     setQuery(value);

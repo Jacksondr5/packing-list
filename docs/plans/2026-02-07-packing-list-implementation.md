@@ -95,11 +95,11 @@ git commit -m "feat: scaffold Next.js project with Tailwind, ShadCN, Convex, and
 - Create: `middleware.ts`
 - Create: `components/ConvexClientProvider.tsx`
 - Modify: `app/layout.tsx`
-- Create: `.env.local` (template — user fills in real values)
+- Create: `.env.example` (template — user fills in real values)
 
-**Step 1: Create `.env.local` template**
+**Step 1: Create `.env.example` template**
 
-Create `.env.local` with placeholder values. The user will need to fill these in with real values from their Clerk and Convex dashboards:
+Create `.env.example` with placeholder values. The user will need to fill these in with real values from their Clerk and Convex dashboards. Do **not** commit `.env.local` to version control.
 
 ```env
 NEXT_PUBLIC_CONVEX_URL=
@@ -108,7 +108,7 @@ CLERK_SECRET_KEY=
 CLERK_JWT_ISSUER_DOMAIN=
 ```
 
-Also create `.env.local.example` with the same content (for version control).
+When running locally, copy `.env.example` to `.env.local` and keep `.env.local` out of git.
 
 **Step 2: Create Convex schema**
 
@@ -292,7 +292,7 @@ export default function RootLayout({
 }
 ```
 
-**Step 7: Commit**
+**Step 7: Commit** (verify `.env.local` is not staged)
 
 ```bash
 git add -A

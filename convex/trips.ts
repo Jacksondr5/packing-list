@@ -89,6 +89,13 @@ export const deleteTrip = mutation({
   args: { tripId: v.id("trips") },
   handler: async (ctx, args) => {
     await verifyTripOwnership(ctx, args.tripId);
+    const tripItems = await ctx.db
+      .query("tripItems")
+      .withIndex("by_trip", (q) => q.eq("tripId", args.tripId))
+      .collect();
+    for (const item of tripItems) {
+      await ctx.db.delete(item._id);
+    }
     await ctx.db.delete(args.tripId);
   },
 });
