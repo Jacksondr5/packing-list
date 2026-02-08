@@ -85,6 +85,14 @@ export const updateLuggage = mutation({
   },
 });
 
+export const deleteTrip = mutation({
+  args: { tripId: v.id("trips") },
+  handler: async (ctx, args) => {
+    await verifyTripOwnership(ctx, args.tripId);
+    await ctx.db.delete(args.tripId);
+  },
+});
+
 export const updateStatus = mutation({
   args: {
     tripId: v.id("trips"),

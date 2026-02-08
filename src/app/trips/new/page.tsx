@@ -28,6 +28,7 @@ export default function NewTripPage() {
   );
 
   const createTrip = useMutation(api.trips.create);
+  const deleteTrip = useMutation(api.trips.deleteTrip);
   const createTripItems = useMutation(api.tripItems.createMany);
   const fetchForecast = useAction(api.weather.fetchForecast);
 
@@ -124,24 +125,30 @@ export default function NewTripPage() {
         weather,
       });
 
-      // Generate packing list
-      const packingList = generatePackingList(items, {
-        tripType,
-        tripDays,
-        weather,
-      });
-
-      // Save trip items
-      if (packingList.length > 0) {
-        await createTripItems({
-          items: packingList.map((item) => ({
-            tripId,
-            itemName: item.itemName,
-            category: item.category,
-            quantity: item.quantity,
-            packed: false,
-          })),
+      try {
+        // Generate packing list
+        const packingList = generatePackingList(items, {
+          tripType,
+          tripDays,
+          weather,
         });
+
+        // Save trip items
+        if (packingList.length > 0) {
+          await createTripItems({
+            items: packingList.map((item) => ({
+              tripId,
+              itemName: item.itemName,
+              category: item.category,
+              quantity: item.quantity,
+              packed: false,
+            })),
+          });
+        }
+      } catch (error) {
+        // Clean up the orphaned trip if packing list generation/saving fails
+        await deleteTrip({ tripId });
+        throw error;
       }
 
       router.push(`/trips/${tripId}`);
