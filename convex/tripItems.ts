@@ -22,7 +22,7 @@ export const createMany = mutation({
         category: v.string(),
         quantity: v.number(),
         packed: v.boolean(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {

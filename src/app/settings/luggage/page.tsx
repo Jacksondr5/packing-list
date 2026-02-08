@@ -28,7 +28,7 @@ export default function LuggageSettingsPage() {
   const user = useQuery(api.users.getCurrentUser);
   const luggageList = useQuery(
     api.luggage.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
   const createLuggage = useMutation(api.luggage.create);
   const removeLuggage = useMutation(api.luggage.remove);
@@ -40,9 +40,7 @@ export default function LuggageSettingsPage() {
 
   const toggleMode = (mode: string) => {
     setModes((prev) =>
-      prev.includes(mode)
-        ? prev.filter((m) => m !== mode)
-        : [...prev, mode]
+      prev.includes(mode) ? prev.filter((m) => m !== mode) : [...prev, mode],
     );
   };
 
@@ -61,9 +59,9 @@ export default function LuggageSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-4">
+      <main className="mx-auto max-w-lg space-y-4 px-4 py-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">My Luggage</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -130,7 +128,7 @@ export default function LuggageSettingsPage() {
         </div>
 
         {(!luggageList || luggageList.length === 0) && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             No luggage added yet. Add your bags to get luggage suggestions when
             creating trips.
           </p>
@@ -140,11 +138,11 @@ export default function LuggageSettingsPage() {
           {luggageList?.map((bag) => (
             <div
               key={bag._id}
-              className="flex items-center justify-between rounded-lg bg-card p-3"
+              className="bg-card flex items-center justify-between rounded-lg p-3"
             >
               <div>
                 <p className="text-sm font-medium">{bag.name}</p>
-                <div className="flex gap-1 mt-1">
+                <div className="mt-1 flex gap-1">
                   <Badge variant="secondary" className="text-xs">
                     {bag.size}
                   </Badge>

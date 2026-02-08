@@ -32,7 +32,7 @@ export default function PackingChecklist({
       acc[item.category].push(item);
       return acc;
     },
-    {} as Record<string, TripItem[]>
+    {} as Record<string, TripItem[]>,
   );
 
   const totalItems = items.length;
@@ -68,7 +68,7 @@ export default function PackingChecklist({
           <div key={category} className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium">{category}</h3>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {categoryPacked}/{categoryItems.length}
               </span>
             </div>
@@ -80,20 +80,24 @@ export default function PackingChecklist({
                     item.packed
                       ? "bg-muted/50 text-muted-foreground"
                       : "bg-card hover:bg-accent"
-                  } ${readOnly ? "cursor-default" : "cursor-pointer active:bg-accent"}`}
+                  } ${readOnly ? "cursor-default" : "active:bg-accent cursor-pointer"}`}
                   onClick={() => {
                     if (!readOnly) togglePacked({ id: item._id });
                   }}
                   disabled={readOnly}
                 >
-                  <Checkbox checked={item.packed} tabIndex={-1} className="pointer-events-none" />
+                  <Checkbox
+                    checked={item.packed}
+                    tabIndex={-1}
+                    className="pointer-events-none"
+                  />
                   <span
                     className={`flex-1 ${item.packed ? "line-through" : ""}`}
                   >
                     {item.itemName}
                   </span>
                   {item.quantity > 1 && (
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       x{item.quantity}
                     </span>
                   )}

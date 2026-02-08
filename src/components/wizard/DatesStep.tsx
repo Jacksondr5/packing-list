@@ -41,11 +41,11 @@ export default function DatesStep({
         />
       </div>
       {departureDate && returnDate && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {Math.ceil(
             (new Date(returnDate).getTime() -
               new Date(departureDate).getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           ) + 1}{" "}
           days
         </p>

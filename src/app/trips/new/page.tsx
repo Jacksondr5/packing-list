@@ -10,7 +10,10 @@ import DestinationStep from "@/components/wizard/DestinationStep";
 import DatesStep from "@/components/wizard/DatesStep";
 import TripTypeStep from "@/components/wizard/TripTypeStep";
 import TransportStep from "@/components/wizard/TransportStep";
-import { generatePackingList, type DailyForecast } from "@/lib/generatePackingList";
+import {
+  generatePackingList,
+  type DailyForecast,
+} from "@/lib/generatePackingList";
 import { getConditionFromCode } from "@/lib/weatherCodes";
 
 const STEPS = ["Destination", "Dates", "Trip Type", "Transport"];
@@ -20,11 +23,11 @@ export default function NewTripPage() {
   const user = useQuery(api.users.getCurrentUser);
   const items = useQuery(
     api.items.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
   const luggage = useQuery(
     api.luggage.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
 
   const createTrip = useMutation(api.trips.create);
@@ -68,7 +71,10 @@ export default function NewTripPage() {
 
     try {
       // Fetch weather
-      let weather: { dailyForecasts: DailyForecast[]; fetchedAt: number } | null = null;
+      let weather: {
+        dailyForecasts: DailyForecast[];
+        fetchedAt: number;
+      } | null = null;
       try {
         const forecastData = await fetchForecast({
           latitude: destination.latitude,
@@ -88,9 +94,9 @@ export default function NewTripPage() {
               snowfall: forecastData.daily.snowfall_sum[i],
               weatherCode: forecastData.daily.weather_code[i],
               condition: getConditionFromCode(
-                forecastData.daily.weather_code[i]
+                forecastData.daily.weather_code[i],
               ),
-            })
+            }),
           );
           weather = { dailyForecasts, fetchedAt: Date.now() };
         }
@@ -100,16 +106,15 @@ export default function NewTripPage() {
 
       // Suggest luggage
       const compatibleLuggage = (luggage ?? []).filter((bag) =>
-        bag.transportModes.includes(transportMode)
+        bag.transportModes.includes(transportMode),
       );
       const selectedLuggage = compatibleLuggage.map((bag) => bag._id);
 
       // Create trip
       const tripDays =
         Math.ceil(
-          (new Date(returnDate).getTime() -
-            new Date(departureDate).getTime()) /
-            (1000 * 60 * 60 * 24)
+          (new Date(returnDate).getTime() - new Date(departureDate).getTime()) /
+            (1000 * 60 * 60 * 24),
         ) + 1;
 
       const tripId = await createTrip({
@@ -157,7 +162,7 @@ export default function NewTripPage() {
       alert(
         error instanceof Error
           ? `Failed to create trip: ${error.message}`
-          : "Failed to create trip. Please try again."
+          : "Failed to create trip. Please try again.",
       );
     } finally {
       setGenerating(false);
@@ -166,13 +171,11 @@ export default function NewTripPage() {
 
   if (generating) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background min-h-screen">
         <Header />
         <main className="mx-auto max-w-lg px-4 py-12 text-center">
-          <p className="text-lg font-medium">
-            Generating your packing list...
-          </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-lg font-medium">Generating your packing list...</p>
+          <p className="text-muted-foreground text-sm">
             Fetching weather and calculating what you need
           </p>
         </main>
@@ -181,7 +184,7 @@ export default function NewTripPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
       <main className="mx-auto max-w-lg px-4 py-6">
         <WizardShell
@@ -209,10 +212,7 @@ export default function NewTripPage() {
                 );
               case 2:
                 return (
-                  <TripTypeStep
-                    selected={tripType}
-                    onSelect={setTripType}
-                  />
+                  <TripTypeStep selected={tripType} onSelect={setTripType} />
                 );
               case 3:
                 return (

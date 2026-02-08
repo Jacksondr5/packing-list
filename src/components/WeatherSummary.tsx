@@ -15,7 +15,7 @@ export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-muted-foreground">Weather</h3>
+      <h3 className="text-muted-foreground text-sm font-medium">Weather</h3>
       <div className="flex gap-2 overflow-x-auto pb-2">
         {forecasts.map((day) => (
           <div

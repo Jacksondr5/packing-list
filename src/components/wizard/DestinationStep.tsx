@@ -72,13 +72,13 @@ export default function DestinationStep({
       </div>
 
       {selected && (
-        <div className="rounded-md border border-primary bg-primary/5 p-3 text-sm">
+        <div className="border-primary bg-primary/5 rounded-md border p-3 text-sm">
           Selected: <strong>{selected.name}</strong>
         </div>
       )}
 
       {searching && (
-        <p className="text-sm text-muted-foreground">Searching...</p>
+        <p className="text-muted-foreground text-sm">Searching...</p>
       )}
 
       {results.length > 0 && (
@@ -86,7 +86,7 @@ export default function DestinationStep({
           {results.map((r) => (
             <Card
               key={r.id}
-              className="cursor-pointer transition-colors hover:bg-accent"
+              className="hover:bg-accent cursor-pointer transition-colors"
               onClick={() => {
                 onSelect({
                   name: `${r.name}, ${r.country}`,
@@ -99,7 +99,7 @@ export default function DestinationStep({
             >
               <CardContent className="py-3">
                 <p className="font-medium">{r.name}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {r.admin1 ? `${r.admin1}, ` : ""}
                   {r.country}
                 </p>

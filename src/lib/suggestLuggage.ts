@@ -14,11 +14,11 @@ const SIZE_CAPACITY: Record<string, number> = {
 export function suggestLuggage(
   allLuggage: LuggageItem[],
   transportMode: string,
-  totalItemCount: number
+  totalItemCount: number,
 ): LuggageItem[] {
   // Filter by transport compatibility
   const compatible = allLuggage.filter((bag) =>
-    bag.transportModes.includes(transportMode)
+    bag.transportModes.includes(transportMode),
   );
 
   if (compatible.length === 0) return [];
@@ -26,7 +26,7 @@ export function suggestLuggage(
   // Sort by size descending (largest first for greedy packing)
   const sizeOrder: Record<string, number> = { small: 0, medium: 1, large: 2 };
   const sorted = [...compatible].sort(
-    (a, b) => sizeOrder[b.size] - sizeOrder[a.size]
+    (a, b) => sizeOrder[b.size] - sizeOrder[a.size],
   );
 
   // Greedy: pick bags until we have enough capacity
@@ -44,11 +44,11 @@ export function suggestLuggage(
 
 export function getLuggageWarning(
   selectedLuggage: LuggageItem[],
-  totalItemCount: number
+  totalItemCount: number,
 ): string | null {
   const totalCapacity = selectedLuggage.reduce(
     (sum, bag) => sum + SIZE_CAPACITY[bag.size],
-    0
+    0,
   );
 
   if (totalCapacity < totalItemCount * 0.7) {

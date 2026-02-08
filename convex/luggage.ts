@@ -18,11 +18,7 @@ export const create = mutation({
     userId: v.id("users"),
     name: v.string(),
     transportModes: v.array(v.string()),
-    size: v.union(
-      v.literal("small"),
-      v.literal("medium"),
-      v.literal("large")
-    ),
+    size: v.union(v.literal("small"), v.literal("medium"), v.literal("large")),
   },
   handler: async (ctx, args) => {
     await verifyUserOwnership(ctx, args.userId);
@@ -36,11 +32,7 @@ export const update = mutation({
     name: v.optional(v.string()),
     transportModes: v.optional(v.array(v.string())),
     size: v.optional(
-      v.union(
-        v.literal("small"),
-        v.literal("medium"),
-        v.literal("large")
-      )
+      v.union(v.literal("small"), v.literal("medium"), v.literal("large")),
     ),
   },
   handler: async (ctx, args) => {

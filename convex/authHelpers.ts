@@ -6,7 +6,7 @@ import { Doc, Id } from "./_generated/dataModel";
  * Throws if no identity is found or no matching user exists.
  */
 export async function authenticateUser(
-  ctx: QueryCtx | MutationCtx
+  ctx: QueryCtx | MutationCtx,
 ): Promise<Doc<"users">> {
   const identity = await ctx.auth.getUserIdentity();
   if (!identity) throw new Error("Not authenticated");
@@ -26,7 +26,7 @@ export async function authenticateUser(
  */
 export async function verifyUserOwnership(
   ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">
+  userId: Id<"users">,
 ): Promise<Doc<"users">> {
   const user = await authenticateUser(ctx);
   if (user._id !== userId) {
@@ -41,7 +41,7 @@ export async function verifyUserOwnership(
  */
 export async function verifyTripOwnership(
   ctx: QueryCtx | MutationCtx,
-  tripId: Id<"trips">
+  tripId: Id<"trips">,
 ): Promise<{ user: Doc<"users">; trip: Doc<"trips"> }> {
   const user = await authenticateUser(ctx);
   const trip = await ctx.db.get("trips", tripId);

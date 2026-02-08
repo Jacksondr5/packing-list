@@ -22,6 +22,7 @@ No test framework is currently configured.
 ### Frontend (Next.js App Router)
 
 Routes in `src/app/`:
+
 - `/` — trip list (home)
 - `/trips/new` — multi-step trip creation wizard
 - `/trips/[tripId]` — individual trip view with packing checklist
@@ -30,6 +31,7 @@ Routes in `src/app/`:
 - `/sign-in`, `/sign-up` — Clerk auth pages
 
 Components in `src/components/`:
+
 - `ui/` — ShadCN primitives (button, card, dialog, checkbox, etc.)
 - `wizard/` — multi-step trip creation wizard (WizardShell, DestinationStep, DatesStep, TripTypeStep, TransportStep)
 - Top-level: Header, ConvexClientProvider, WeatherSummary, PackingChecklist
@@ -39,6 +41,7 @@ Components in `src/components/`:
 All backend logic lives in `convex/`. No Next.js API routes are used — the app communicates entirely through Convex queries, mutations, and actions via React hooks (`useQuery`, `useMutation`, `useAction`).
 
 Key function files:
+
 - `trips.ts`, `items.ts`, `luggage.ts`, `tripItems.ts`, `users.ts` — CRUD operations
 - `weather.ts` — action that calls the Open-Meteo API for forecasts
 - `defaultItems.ts` — seed data for new users' item libraries
@@ -67,6 +70,7 @@ Clerk handles auth → Convex syncs user identity → user manages items/luggage
 ## Environment Variables
 
 Required in `.env.local` (see `.env.local.example`):
+
 - `NEXT_PUBLIC_CONVEX_URL` — Convex deployment URL
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — Clerk public key
 - `CLERK_SECRET_KEY` — Clerk secret key

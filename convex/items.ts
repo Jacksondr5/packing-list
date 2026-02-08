@@ -26,13 +26,13 @@ export const create = mutation({
         rain: v.optional(v.boolean()),
         snow: v.optional(v.boolean()),
       }),
-      v.null()
+      v.null(),
     ),
     quantityRule: v.object({
       type: v.union(
         v.literal("perDay"),
         v.literal("perNDays"),
-        v.literal("fixed")
+        v.literal("fixed"),
       ),
       value: v.number(),
     }),
@@ -57,18 +57,18 @@ export const update = mutation({
           rain: v.optional(v.boolean()),
           snow: v.optional(v.boolean()),
         }),
-        v.null()
-      )
+        v.null(),
+      ),
     ),
     quantityRule: v.optional(
       v.object({
         type: v.union(
           v.literal("perDay"),
           v.literal("perNDays"),
-          v.literal("fixed")
+          v.literal("fixed"),
         ),
         value: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {

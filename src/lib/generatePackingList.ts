@@ -44,13 +44,13 @@ interface GeneratedItem {
 
 export function generatePackingList(
   masterItems: MasterItem[],
-  trip: TripDetails
+  trip: TripDetails,
 ): GeneratedItem[] {
   const { tripType, tripDays, weather } = trip;
 
   // Compute weather summary across ALL forecast days
-  let minHighTemp = Infinity;   // lowest high temp across all days
-  let maxLowTemp = -Infinity;   // highest low temp across all days
+  let minHighTemp = Infinity; // lowest high temp across all days
+  let maxLowTemp = -Infinity; // highest low temp across all days
   let hasRain = false;
   let hasSnow = false;
 

@@ -13,11 +13,11 @@ const weatherValidator = v.union(
         snowfall: v.number(),
         weatherCode: v.number(),
         condition: v.string(),
-      })
+      }),
     ),
     fetchedAt: v.number(),
   }),
-  v.null()
+  v.null(),
 );
 
 export const listByUser = query({
@@ -99,7 +99,7 @@ export const updateStatus = mutation({
     status: v.union(
       v.literal("planning"),
       v.literal("packing"),
-      v.literal("completed")
+      v.literal("completed"),
     ),
   },
   handler: async (ctx, args) => {

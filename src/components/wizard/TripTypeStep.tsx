@@ -36,7 +36,7 @@ export default function TripTypeStep({
 }: TripTypeStepProps) {
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         What kind of trip is this?
       </p>
       {TRIP_TYPES.map((type) => (
@@ -51,16 +51,14 @@ export default function TripTypeStep({
               onSelect(type.value);
             }
           }}
-          className={`cursor-pointer transition-colors hover:bg-accent ${
+          className={`hover:bg-accent cursor-pointer transition-colors ${
             selected === type.value ? "border-primary bg-primary/5" : ""
           }`}
           onClick={() => onSelect(type.value)}
         >
           <CardContent className="py-3">
             <p className="font-medium">{type.label}</p>
-            <p className="text-sm text-muted-foreground">
-              {type.description}
-            </p>
+            <p className="text-muted-foreground text-sm">{type.description}</p>
           </CardContent>
         </Card>
       ))}

@@ -9,6 +9,7 @@
 **Tech Stack:** Next.js 16, Convex, Clerk, Tailwind CSS v4, ShadCN UI, Open-Meteo API
 
 **Reference docs:**
+
 - Design: `docs/plans/2026-02-07-packing-list-app-design.md`
 - Tech research: `docs/tech-stack-setup-research.md`
 - Default items: `src/data/defaultItems.ts`
@@ -18,6 +19,7 @@
 ### Task 1: Project Scaffolding
 
 **Files:**
+
 - Create: Next.js project via `create-next-app`
 - Create: `postcss.config.mjs` (auto-created by create-next-app)
 - Create: `app/globals.css` (auto-created)
@@ -87,6 +89,7 @@ git commit -m "feat: scaffold Next.js project with Tailwind, ShadCN, Convex, and
 ### Task 2: Convex Schema & Auth Config
 
 **Files:**
+
 - Create: `convex/schema.ts`
 - Create: `convex/auth.config.ts`
 - Create: `middleware.ts`
@@ -134,13 +137,13 @@ export default defineSchema({
         rain: v.optional(v.boolean()),
         snow: v.optional(v.boolean()),
       }),
-      v.null()
+      v.null(),
     ),
     quantityRule: v.object({
       type: v.union(
         v.literal("perDay"),
         v.literal("perNDays"),
-        v.literal("fixed")
+        v.literal("fixed"),
       ),
       value: v.number(),
     }),
@@ -150,11 +153,7 @@ export default defineSchema({
     userId: v.id("users"),
     name: v.string(),
     transportModes: v.array(v.string()),
-    size: v.union(
-      v.literal("small"),
-      v.literal("medium"),
-      v.literal("large")
-    ),
+    size: v.union(v.literal("small"), v.literal("medium"), v.literal("large")),
   }).index("by_user", ["userId"]),
 
   trips: defineTable({
@@ -178,16 +177,16 @@ export default defineSchema({
             snowfall: v.number(),
             weatherCode: v.number(),
             condition: v.string(),
-          })
+          }),
         ),
         fetchedAt: v.number(),
       }),
-      v.null()
+      v.null(),
     ),
     status: v.union(
       v.literal("planning"),
       v.literal("packing"),
-      v.literal("completed")
+      v.literal("completed"),
     ),
   })
     .index("by_user", ["userId"])
@@ -305,6 +304,7 @@ git commit -m "feat: add Convex schema, Clerk auth config, and provider setup"
 ### Task 3: User Management & Default Item Seeding
 
 **Files:**
+
 - Create: `convex/users.ts`
 - Move: `src/data/defaultItems.ts` to `convex/defaultItems.ts` (Convex actions need access)
 - Create: `convex/items.ts`
@@ -412,13 +412,13 @@ export const create = mutation({
         rain: v.optional(v.boolean()),
         snow: v.optional(v.boolean()),
       }),
-      v.null()
+      v.null(),
     ),
     quantityRule: v.object({
       type: v.union(
         v.literal("perDay"),
         v.literal("perNDays"),
-        v.literal("fixed")
+        v.literal("fixed"),
       ),
       value: v.number(),
     }),
@@ -442,18 +442,18 @@ export const update = mutation({
           rain: v.optional(v.boolean()),
           snow: v.optional(v.boolean()),
         }),
-        v.null()
-      )
+        v.null(),
+      ),
     ),
     quantityRule: v.optional(
       v.object({
         type: v.union(
           v.literal("perDay"),
           v.literal("perNDays"),
-          v.literal("fixed")
+          v.literal("fixed"),
         ),
         value: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -487,6 +487,7 @@ git commit -m "feat: add user management with default item seeding and item CRUD
 ### Task 4: Luggage CRUD Functions
 
 **Files:**
+
 - Create: `convex/luggage.ts`
 
 **Step 1: Create luggage functions**
@@ -512,11 +513,7 @@ export const create = mutation({
     userId: v.id("users"),
     name: v.string(),
     transportModes: v.array(v.string()),
-    size: v.union(
-      v.literal("small"),
-      v.literal("medium"),
-      v.literal("large")
-    ),
+    size: v.union(v.literal("small"), v.literal("medium"), v.literal("large")),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("luggage", args);
@@ -529,11 +526,7 @@ export const update = mutation({
     name: v.optional(v.string()),
     transportModes: v.optional(v.array(v.string())),
     size: v.optional(
-      v.union(
-        v.literal("small"),
-        v.literal("medium"),
-        v.literal("large")
-      )
+      v.union(v.literal("small"), v.literal("medium"), v.literal("large")),
     ),
   },
   handler: async (ctx, args) => {
@@ -566,6 +559,7 @@ git commit -m "feat: add luggage CRUD functions"
 ### Task 5: Weather Action & List Generation Logic
 
 **Files:**
+
 - Create: `convex/weather.ts`
 - Create: `convex/trips.ts`
 - Create: `convex/tripItems.ts`
@@ -612,7 +606,9 @@ export function getConditionFromCode(code: number): string {
 }
 
 export function isRainCode(code: number): boolean {
-  return [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99].includes(code);
+  return [
+    51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99,
+  ].includes(code);
 }
 
 export function isSnowCode(code: number): boolean {
@@ -632,7 +628,7 @@ export const geocodeCity = action({
   args: { cityName: v.string() },
   handler: async (_ctx, args) => {
     const response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.cityName)}&count=5&language=en`
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.cityName)}&count=5&language=en`,
     );
     const data = await response.json();
     return data.results ?? [];
@@ -650,7 +646,10 @@ export const fetchForecast = action({
     const url = new URL("https://api.open-meteo.com/v1/forecast");
     url.searchParams.set("latitude", String(args.latitude));
     url.searchParams.set("longitude", String(args.longitude));
-    url.searchParams.set("daily", "temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum,weather_code");
+    url.searchParams.set(
+      "daily",
+      "temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum,weather_code",
+    );
     url.searchParams.set("temperature_unit", "fahrenheit");
     url.searchParams.set("timezone", "auto");
     url.searchParams.set("start_date", args.startDate);
@@ -684,11 +683,11 @@ const weatherValidator = v.union(
         snowfall: v.number(),
         weatherCode: v.number(),
         condition: v.string(),
-      })
+      }),
     ),
     fetchedAt: v.number(),
   }),
-  v.null()
+  v.null(),
 );
 
 export const listByUser = query({
@@ -757,7 +756,7 @@ export const updateStatus = mutation({
     status: v.union(
       v.literal("planning"),
       v.literal("packing"),
-      v.literal("completed")
+      v.literal("completed"),
     ),
   },
   handler: async (ctx, args) => {
@@ -793,7 +792,7 @@ export const createMany = mutation({
         category: v.string(),
         quantity: v.number(),
         packed: v.boolean(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -856,6 +855,7 @@ git commit -m "feat: add weather API, trip CRUD, and trip item management"
 ### Task 6: List Generation Logic (Client-Side Utility)
 
 **Files:**
+
 - Create: `lib/generatePackingList.ts`
 - Create: `lib/suggestLuggage.ts`
 
@@ -911,7 +911,7 @@ interface GeneratedItem {
 
 export function generatePackingList(
   masterItems: MasterItem[],
-  trip: TripDetails
+  trip: TripDetails,
 ): GeneratedItem[] {
   const { tripType, tripDays, weather } = trip;
 
@@ -1015,11 +1015,11 @@ const SIZE_CAPACITY = { small: 15, medium: 30, large: 50 };
 export function suggestLuggage(
   allLuggage: LuggageItem[],
   transportMode: string,
-  totalItemCount: number
+  totalItemCount: number,
 ): LuggageItem[] {
   // Filter by transport compatibility
   const compatible = allLuggage.filter((bag) =>
-    bag.transportModes.includes(transportMode)
+    bag.transportModes.includes(transportMode),
   );
 
   if (compatible.length === 0) return [];
@@ -1027,7 +1027,7 @@ export function suggestLuggage(
   // Sort by size ascending
   const sizeOrder = { small: 0, medium: 1, large: 2 };
   const sorted = [...compatible].sort(
-    (a, b) => sizeOrder[a.size] - sizeOrder[b.size]
+    (a, b) => sizeOrder[a.size] - sizeOrder[b.size],
   );
 
   // Find the smallest bag(s) that fit
@@ -1045,11 +1045,11 @@ export function suggestLuggage(
 
 export function getLuggageWarning(
   selectedLuggage: LuggageItem[],
-  totalItemCount: number
+  totalItemCount: number,
 ): string | null {
   const totalCapacity = selectedLuggage.reduce(
     (sum, bag) => sum + SIZE_CAPACITY[bag.size],
-    0
+    0,
   );
 
   if (totalCapacity < totalItemCount * 0.7) {
@@ -1071,6 +1071,7 @@ git commit -m "feat: add packing list generation and luggage suggestion logic"
 ### Task 7: Home Page & Auth UI
 
 **Files:**
+
 - Create: `app/page.tsx` (replace default)
 - Create: `components/Header.tsx`
 - Create: `app/sign-in/[[...sign-in]]/page.tsx`
@@ -1088,11 +1089,11 @@ import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-background px-4 py-3">
+    <header className="bg-background sticky top-0 z-50 border-b px-4 py-3">
       <div className="mx-auto flex max-w-lg items-center justify-between">
         <h1 className="text-lg font-bold">PackPal</h1>
         <AuthLoading>
-          <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+          <div className="bg-muted h-8 w-8 animate-pulse rounded-full" />
         </AuthLoading>
         <Unauthenticated>
           <SignInButton mode="modal" />
@@ -1127,7 +1128,7 @@ function TripList() {
   const user = useQuery(api.users.getCurrentUser);
   const trips = useQuery(
     api.trips.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
 
   useEffect(() => {
@@ -1148,7 +1149,7 @@ function TripList() {
 
       {activeTrips.length === 0 && pastTrips.length === 0 && (
         <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
+          <CardContent className="text-muted-foreground py-8 text-center">
             No trips yet. Create your first trip to get started!
           </CardContent>
         </Card>
@@ -1156,15 +1157,18 @@ function TripList() {
 
       {activeTrips.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Active</h3>
+          <h3 className="text-muted-foreground text-sm font-medium">Active</h3>
           {activeTrips.map((trip) => (
             <Link key={trip._id} href={`/trips/${trip._id}`}>
-              <Card className="transition-colors hover:bg-accent">
+              <Card className="hover:bg-accent transition-colors">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">{trip.destination}</CardTitle>
+                  <CardTitle className="text-base">
+                    {trip.destination}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  {trip.departureDate} - {trip.returnDate} | {trip.tripType} | {trip.transportMode}
+                <CardContent className="text-muted-foreground text-sm">
+                  {trip.departureDate} - {trip.returnDate} | {trip.tripType} |{" "}
+                  {trip.transportMode}
                 </CardContent>
               </Card>
             </Link>
@@ -1174,14 +1178,18 @@ function TripList() {
 
       {pastTrips.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Past Trips</h3>
+          <h3 className="text-muted-foreground text-sm font-medium">
+            Past Trips
+          </h3>
           {pastTrips.map((trip) => (
             <Link key={trip._id} href={`/trips/${trip._id}`}>
-              <Card className="opacity-60 transition-colors hover:bg-accent">
+              <Card className="hover:bg-accent opacity-60 transition-colors">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base">{trip.destination}</CardTitle>
+                  <CardTitle className="text-base">
+                    {trip.destination}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
+                <CardContent className="text-muted-foreground text-sm">
                   {trip.departureDate} - {trip.returnDate} | {trip.tripType}
                 </CardContent>
               </Card>
@@ -1195,11 +1203,11 @@ function TripList() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
       <main className="mx-auto max-w-lg px-4 py-6">
         <Unauthenticated>
-          <div className="space-y-4 text-center py-12">
+          <div className="space-y-4 py-12 text-center">
             <h2 className="text-2xl font-bold">Smart Packing Lists</h2>
             <p className="text-muted-foreground">
               Generate weather-aware packing lists for your trips. Never forget
@@ -1258,6 +1266,7 @@ git commit -m "feat: add home page with trip list, auth UI, and sign-in/sign-up 
 ### Task 8: Trip Wizard — Destination & Dates Steps
 
 **Files:**
+
 - Create: `app/trips/new/page.tsx`
 - Create: `components/wizard/WizardShell.tsx`
 - Create: `components/wizard/DestinationStep.tsx`
@@ -1293,7 +1302,7 @@ export default function WizardShell({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex justify-between text-sm">
           <span>{steps[currentStep]}</span>
           <span>
             {currentStep + 1} / {steps.length}
@@ -1402,13 +1411,13 @@ export default function DestinationStep({
       </div>
 
       {selected && (
-        <div className="rounded-md border border-primary bg-primary/5 p-3 text-sm">
+        <div className="border-primary bg-primary/5 rounded-md border p-3 text-sm">
           Selected: <strong>{selected.name}</strong>
         </div>
       )}
 
       {searching && (
-        <p className="text-sm text-muted-foreground">Searching...</p>
+        <p className="text-muted-foreground text-sm">Searching...</p>
       )}
 
       {results.length > 0 && (
@@ -1416,7 +1425,7 @@ export default function DestinationStep({
           {results.map((r) => (
             <Card
               key={r.id}
-              className="cursor-pointer transition-colors hover:bg-accent"
+              className="hover:bg-accent cursor-pointer transition-colors"
               onClick={() => {
                 onSelect({
                   name: `${r.name}, ${r.country}`,
@@ -1429,7 +1438,7 @@ export default function DestinationStep({
             >
               <CardContent className="py-3">
                 <p className="font-medium">{r.name}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {r.admin1 ? `${r.admin1}, ` : ""}
                   {r.country}
                 </p>
@@ -1491,11 +1500,11 @@ export default function DatesStep({
         />
       </div>
       {departureDate && returnDate && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {Math.ceil(
             (new Date(returnDate).getTime() -
               new Date(departureDate).getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           ) + 1}{" "}
           days
         </p>
@@ -1517,6 +1526,7 @@ git commit -m "feat: add trip wizard shell, destination search, and date picker 
 ### Task 9: Trip Wizard — Type, Transport & Complete Flow
 
 **Files:**
+
 - Create: `components/wizard/TripTypeStep.tsx`
 - Create: `components/wizard/TransportStep.tsx`
 - Modify: `app/trips/new/page.tsx` (wire up all steps)
@@ -1531,10 +1541,26 @@ Create `components/wizard/TripTypeStep.tsx`:
 import { Card, CardContent } from "@/components/ui/card";
 
 const TRIP_TYPES = [
-  { value: "business", label: "Business", description: "Work meetings, conferences" },
-  { value: "vacation", label: "Vacation / Beach", description: "Relaxation, sun, swimming" },
-  { value: "camping", label: "Camping / Outdoors", description: "Hiking, nature, adventure" },
-  { value: "cityBreak", label: "City Break", description: "Sightseeing, culture, food" },
+  {
+    value: "business",
+    label: "Business",
+    description: "Work meetings, conferences",
+  },
+  {
+    value: "vacation",
+    label: "Vacation / Beach",
+    description: "Relaxation, sun, swimming",
+  },
+  {
+    value: "camping",
+    label: "Camping / Outdoors",
+    description: "Hiking, nature, adventure",
+  },
+  {
+    value: "cityBreak",
+    label: "City Break",
+    description: "Sightseeing, culture, food",
+  },
 ];
 
 interface TripTypeStepProps {
@@ -1548,18 +1574,20 @@ export default function TripTypeStep({
 }: TripTypeStepProps) {
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">What kind of trip is this?</p>
+      <p className="text-muted-foreground text-sm">
+        What kind of trip is this?
+      </p>
       {TRIP_TYPES.map((type) => (
         <Card
           key={type.value}
-          className={`cursor-pointer transition-colors hover:bg-accent ${
+          className={`hover:bg-accent cursor-pointer transition-colors ${
             selected === type.value ? "border-primary bg-primary/5" : ""
           }`}
           onClick={() => onSelect(type.value)}
         >
           <CardContent className="py-3">
             <p className="font-medium">{type.label}</p>
-            <p className="text-sm text-muted-foreground">{type.description}</p>
+            <p className="text-muted-foreground text-sm">{type.description}</p>
           </CardContent>
         </Card>
       ))}
@@ -1594,22 +1622,20 @@ export default function TransportStep({
 }: TransportStepProps) {
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         How are you getting there?
       </p>
       {TRANSPORT_MODES.map((mode) => (
         <Card
           key={mode.value}
-          className={`cursor-pointer transition-colors hover:bg-accent ${
+          className={`hover:bg-accent cursor-pointer transition-colors ${
             selected === mode.value ? "border-primary bg-primary/5" : ""
           }`}
           onClick={() => onSelect(mode.value)}
         >
           <CardContent className="py-3">
             <p className="font-medium">{mode.label}</p>
-            <p className="text-sm text-muted-foreground">
-              {mode.description}
-            </p>
+            <p className="text-muted-foreground text-sm">{mode.description}</p>
           </CardContent>
         </Card>
       ))}
@@ -1645,11 +1671,11 @@ export default function NewTripPage() {
   const user = useQuery(api.users.getCurrentUser);
   const items = useQuery(
     api.items.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
   const luggage = useQuery(
     api.luggage.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
 
   const createTrip = useMutation(api.trips.create);
@@ -1669,11 +1695,20 @@ export default function NewTripPage() {
 
   const canProceedForStep = (step: number) => {
     switch (step) {
-      case 0: return destination !== null;
-      case 1: return departureDate !== "" && returnDate !== "" && returnDate >= departureDate;
-      case 2: return tripType !== "";
-      case 3: return transportMode !== "";
-      default: return false;
+      case 0:
+        return destination !== null;
+      case 1:
+        return (
+          departureDate !== "" &&
+          returnDate !== "" &&
+          returnDate >= departureDate
+        );
+      case 2:
+        return tripType !== "";
+      case 3:
+        return transportMode !== "";
+      default:
+        return false;
     }
   };
 
@@ -1705,9 +1740,9 @@ export default function NewTripPage() {
               snowfall: forecastData.daily.snowfall_sum[i],
               weatherCode: forecastData.daily.weather_code[i],
               condition: getConditionFromCode(
-                forecastData.daily.weather_code[i]
+                forecastData.daily.weather_code[i],
               ),
-            })
+            }),
           );
           weather = { dailyForecasts, fetchedAt: Date.now() };
         }
@@ -1717,16 +1752,15 @@ export default function NewTripPage() {
 
       // Suggest luggage
       const compatibleLuggage = (luggage ?? []).filter((bag) =>
-        bag.transportModes.includes(transportMode)
+        bag.transportModes.includes(transportMode),
       );
       const selectedLuggage = compatibleLuggage.map((bag) => bag._id);
 
       // Create trip
       const tripDays =
         Math.ceil(
-          (new Date(returnDate).getTime() -
-            new Date(departureDate).getTime()) /
-            (1000 * 60 * 60 * 24)
+          (new Date(returnDate).getTime() - new Date(departureDate).getTime()) /
+            (1000 * 60 * 60 * 24),
         ) + 1;
 
       const tripId = await createTrip({
@@ -1768,11 +1802,11 @@ export default function NewTripPage() {
 
   if (generating) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background min-h-screen">
         <Header />
         <main className="mx-auto max-w-lg px-4 py-12 text-center">
           <p className="text-lg font-medium">Generating your packing list...</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Fetching weather and calculating what you need
           </p>
         </main>
@@ -1781,7 +1815,7 @@ export default function NewTripPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
       <main className="mx-auto max-w-lg px-4 py-6">
         <WizardShell
@@ -1811,10 +1845,7 @@ export default function NewTripPage() {
                 );
               case 2:
                 return (
-                  <TripTypeStep
-                    selected={tripType}
-                    onSelect={setTripType}
-                  />
+                  <TripTypeStep selected={tripType} onSelect={setTripType} />
                 );
               case 3:
                 return (
@@ -1846,6 +1877,7 @@ git commit -m "feat: complete trip wizard with all steps and list generation"
 ### Task 10: Trip Detail Page — Packing Checklist
 
 **Files:**
+
 - Create: `app/trips/[tripId]/page.tsx`
 - Create: `components/PackingChecklist.tsx`
 - Create: `components/WeatherSummary.tsx`
@@ -1872,7 +1904,7 @@ export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-medium text-muted-foreground">Weather</h3>
+      <h3 className="text-muted-foreground text-sm font-medium">Weather</h3>
       <div className="flex gap-2 overflow-x-auto pb-2">
         {forecasts.map((day) => (
           <div
@@ -1942,7 +1974,7 @@ export default function PackingChecklist({
       acc[item.category].push(item);
       return acc;
     },
-    {} as Record<string, TripItem[]>
+    {} as Record<string, TripItem[]>,
   );
 
   const totalItems = items.length;
@@ -1978,7 +2010,7 @@ export default function PackingChecklist({
           <div key={category} className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium">{category}</h3>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {categoryPacked}/{categoryItems.length}
               </span>
             </div>
@@ -1990,7 +2022,7 @@ export default function PackingChecklist({
                     item.packed
                       ? "bg-muted/50 text-muted-foreground"
                       : "bg-card hover:bg-accent"
-                  } ${readOnly ? "cursor-default" : "cursor-pointer active:bg-accent"}`}
+                  } ${readOnly ? "cursor-default" : "active:bg-accent cursor-pointer"}`}
                   onClick={() => {
                     if (!readOnly) togglePacked({ id: item._id });
                   }}
@@ -2003,7 +2035,7 @@ export default function PackingChecklist({
                     {item.itemName}
                   </span>
                   {item.quantity > 1 && (
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       x{item.quantity}
                     </span>
                   )}
@@ -2047,7 +2079,7 @@ export default function TripDetailPage() {
 
   if (!trip || !tripItems) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background min-h-screen">
         <Header />
         <main className="mx-auto max-w-lg px-4 py-6">
           <p className="text-muted-foreground">Loading...</p>
@@ -2062,9 +2094,9 @@ export default function TripDetailPage() {
   const allPacked = tripItems.every((item) => item.packed);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-6">
+      <main className="mx-auto max-w-lg space-y-6 px-4 py-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">{trip.destination}</h2>
@@ -2072,7 +2104,7 @@ export default function TripDetailPage() {
               {trip.status}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {trip.departureDate} - {trip.returnDate} | {trip.tripType} |{" "}
             {trip.transportMode}
           </p>
@@ -2083,7 +2115,7 @@ export default function TripDetailPage() {
         )}
 
         {!trip.weather && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Weather forecast not available for this trip.
           </p>
         )}
@@ -2137,6 +2169,7 @@ git commit -m "feat: add trip detail page with packing checklist and weather sum
 ### Task 11: Settings Pages — Item Library & Luggage Management
 
 **Files:**
+
 - Create: `app/settings/page.tsx`
 - Create: `app/settings/items/page.tsx`
 - Create: `app/settings/luggage/page.tsx`
@@ -2155,26 +2188,26 @@ import Link from "next/link";
 
 export default function SettingsPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-4">
+      <main className="mx-auto max-w-lg space-y-4 px-4 py-6">
         <h2 className="text-xl font-semibold">Settings</h2>
         <Link href="/settings/items">
-          <Card className="transition-colors hover:bg-accent">
+          <Card className="hover:bg-accent transition-colors">
             <CardHeader>
               <CardTitle className="text-base">Item Library</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
+            <CardContent className="text-muted-foreground text-sm">
               Manage your master list of items that can be packed
             </CardContent>
           </Card>
         </Link>
         <Link href="/settings/luggage">
-          <Card className="transition-colors hover:bg-accent">
+          <Card className="hover:bg-accent transition-colors">
             <CardHeader>
               <CardTitle className="text-base">Luggage</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
+            <CardContent className="text-muted-foreground text-sm">
               Manage your bags and their transport compatibility
             </CardContent>
           </Card>
@@ -2229,7 +2262,7 @@ export default function ItemsSettingsPage() {
   const user = useQuery(api.users.getCurrentUser);
   const items = useQuery(
     api.items.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
   const createItem = useMutation(api.items.create);
   const removeItem = useMutation(api.items.remove);
@@ -2260,9 +2293,9 @@ export default function ItemsSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-4">
+      <main className="mx-auto max-w-lg space-y-4 px-4 py-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Item Library</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -2319,7 +2352,7 @@ export default function ItemsSettingsPage() {
           </SelectContent>
         </Select>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {filteredItems?.length ?? 0} items
         </p>
 
@@ -2327,11 +2360,11 @@ export default function ItemsSettingsPage() {
           {filteredItems?.map((item) => (
             <div
               key={item._id}
-              className="flex items-center justify-between rounded-lg bg-card p-3"
+              className="bg-card flex items-center justify-between rounded-lg p-3"
             >
               <div>
                 <p className="text-sm font-medium">{item.name}</p>
-                <div className="flex gap-1 mt-1">
+                <div className="mt-1 flex gap-1">
                   <Badge variant="secondary" className="text-xs">
                     {item.category}
                   </Badge>
@@ -2388,7 +2421,7 @@ export default function LuggageSettingsPage() {
   const user = useQuery(api.users.getCurrentUser);
   const luggageList = useQuery(
     api.luggage.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
   const createLuggage = useMutation(api.luggage.create);
   const removeLuggage = useMutation(api.luggage.remove);
@@ -2400,9 +2433,7 @@ export default function LuggageSettingsPage() {
 
   const toggleMode = (mode: string) => {
     setModes((prev) =>
-      prev.includes(mode)
-        ? prev.filter((m) => m !== mode)
-        : [...prev, mode]
+      prev.includes(mode) ? prev.filter((m) => m !== mode) : [...prev, mode],
     );
   };
 
@@ -2421,9 +2452,9 @@ export default function LuggageSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-4">
+      <main className="mx-auto max-w-lg space-y-4 px-4 py-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">My Luggage</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -2490,7 +2521,7 @@ export default function LuggageSettingsPage() {
         </div>
 
         {(!luggageList || luggageList.length === 0) && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             No luggage added yet. Add your bags to get luggage suggestions when
             creating trips.
           </p>
@@ -2500,11 +2531,11 @@ export default function LuggageSettingsPage() {
           {luggageList?.map((bag) => (
             <div
               key={bag._id}
-              className="flex items-center justify-between rounded-lg bg-card p-3"
+              className="bg-card flex items-center justify-between rounded-lg p-3"
             >
               <div>
                 <p className="text-sm font-medium">{bag.name}</p>
-                <div className="flex gap-1 mt-1">
+                <div className="mt-1 flex gap-1">
                   <Badge variant="secondary" className="text-xs">
                     {bag.size}
                   </Badge>
@@ -2554,6 +2585,7 @@ git commit -m "feat: add settings pages for item library and luggage management"
 ### Task 12: Mobile Polish & Final Styling
 
 **Files:**
+
 - Modify: `app/globals.css` (add mobile-optimized styles)
 - Modify: `app/layout.tsx` (add viewport meta)
 - Review and polish all components for mobile touch targets
@@ -2628,20 +2660,20 @@ git commit -m "fix: address issues found during manual testing"
 
 ## Summary
 
-| Task | Description | Key Files |
-|------|-------------|-----------|
-| 1 | Project scaffolding | Next.js, Tailwind, ShadCN, deps |
-| 2 | Convex schema & auth | schema.ts, auth.config.ts, middleware, providers |
-| 3 | User management & seeding | users.ts, defaultItems.ts, items.ts |
-| 4 | Luggage CRUD | luggage.ts |
-| 5 | Weather & trip functions | weather.ts, trips.ts, tripItems.ts |
-| 6 | List generation logic | generatePackingList.ts, suggestLuggage.ts |
-| 7 | Home page & auth UI | page.tsx, Header, sign-in/sign-up |
-| 8 | Wizard: destination & dates | WizardShell, DestinationStep, DatesStep |
-| 9 | Wizard: type, transport, complete | TripTypeStep, TransportStep, new/page.tsx |
-| 10 | Trip detail & checklist | [tripId]/page.tsx, PackingChecklist, WeatherSummary |
-| 11 | Settings pages | items/page.tsx, luggage/page.tsx |
-| 12 | Mobile polish | globals.css, touch targets |
-| 13 | Manual testing | Full flow verification |
+| Task | Description                       | Key Files                                           |
+| ---- | --------------------------------- | --------------------------------------------------- |
+| 1    | Project scaffolding               | Next.js, Tailwind, ShadCN, deps                     |
+| 2    | Convex schema & auth              | schema.ts, auth.config.ts, middleware, providers    |
+| 3    | User management & seeding         | users.ts, defaultItems.ts, items.ts                 |
+| 4    | Luggage CRUD                      | luggage.ts                                          |
+| 5    | Weather & trip functions          | weather.ts, trips.ts, tripItems.ts                  |
+| 6    | List generation logic             | generatePackingList.ts, suggestLuggage.ts           |
+| 7    | Home page & auth UI               | page.tsx, Header, sign-in/sign-up                   |
+| 8    | Wizard: destination & dates       | WizardShell, DestinationStep, DatesStep             |
+| 9    | Wizard: type, transport, complete | TripTypeStep, TransportStep, new/page.tsx           |
+| 10   | Trip detail & checklist           | [tripId]/page.tsx, PackingChecklist, WeatherSummary |
+| 11   | Settings pages                    | items/page.tsx, luggage/page.tsx                    |
+| 12   | Mobile polish                     | globals.css, touch targets                          |
+| 13   | Manual testing                    | Full flow verification                              |
 
 Tasks 1-2 must be sequential (project setup). Tasks 3-6 can be parallelized (backend functions + logic). Tasks 7-11 should be sequential (UI builds on prior work). Tasks 12-13 are final polish.

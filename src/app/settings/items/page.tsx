@@ -37,7 +37,7 @@ export default function ItemsSettingsPage() {
   const user = useQuery(api.users.getCurrentUser);
   const items = useQuery(
     api.items.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
   const createItem = useMutation(api.items.create);
   const removeItem = useMutation(api.items.remove);
@@ -68,9 +68,9 @@ export default function ItemsSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-4">
+      <main className="mx-auto max-w-lg space-y-4 px-4 py-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Item Library</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -127,7 +127,7 @@ export default function ItemsSettingsPage() {
           </SelectContent>
         </Select>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {filteredItems?.length ?? 0} items
         </p>
 
@@ -135,11 +135,11 @@ export default function ItemsSettingsPage() {
           {filteredItems?.map((item) => (
             <div
               key={item._id}
-              className="flex items-center justify-between rounded-lg bg-card p-3"
+              className="bg-card flex items-center justify-between rounded-lg p-3"
             >
               <div>
                 <p className="text-sm font-medium">{item.name}</p>
-                <div className="flex gap-1 mt-1">
+                <div className="mt-1 flex gap-1">
                   <Badge variant="secondary" className="text-xs">
                     {item.category}
                   </Badge>

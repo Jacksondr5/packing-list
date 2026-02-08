@@ -14,7 +14,7 @@ function TripList() {
   const user = useQuery(api.users.getCurrentUser);
   const trips = useQuery(
     api.trips.listByUser,
-    user ? { userId: user._id } : "skip"
+    user ? { userId: user._id } : "skip",
   );
 
   useEffect(() => {
@@ -36,7 +36,7 @@ function TripList() {
 
       {tripsLoaded && activeTrips.length === 0 && pastTrips.length === 0 && (
         <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
+          <CardContent className="text-muted-foreground py-8 text-center">
             No trips yet. Create your first trip to get started!
           </CardContent>
         </Card>
@@ -44,16 +44,16 @@ function TripList() {
 
       {activeTrips.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Active</h3>
+          <h3 className="text-muted-foreground text-sm font-medium">Active</h3>
           {activeTrips.map((trip) => (
             <Link key={trip._id} href={`/trips/${trip._id}`}>
-              <Card className="transition-colors hover:bg-accent">
+              <Card className="hover:bg-accent transition-colors">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">
                     {trip.destination}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
+                <CardContent className="text-muted-foreground text-sm">
                   {trip.departureDate} - {trip.returnDate} | {trip.tripType} |{" "}
                   {trip.transportMode}
                 </CardContent>
@@ -65,18 +65,18 @@ function TripList() {
 
       {pastTrips.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-muted-foreground text-sm font-medium">
             Past Trips
           </h3>
           {pastTrips.map((trip) => (
             <Link key={trip._id} href={`/trips/${trip._id}`}>
-              <Card className="opacity-60 transition-colors hover:bg-accent">
+              <Card className="hover:bg-accent opacity-60 transition-colors">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-base">
                     {trip.destination}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
+                <CardContent className="text-muted-foreground text-sm">
                   {trip.departureDate} - {trip.returnDate} | {trip.tripType}
                 </CardContent>
               </Card>
@@ -90,11 +90,11 @@ function TripList() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
       <main className="mx-auto max-w-lg px-4 py-6">
         <Unauthenticated>
-          <div className="space-y-4 text-center py-12">
+          <div className="space-y-4 py-12 text-center">
             <h2 className="text-2xl font-bold">Smart Packing Lists</h2>
             <p className="text-muted-foreground">
               Generate weather-aware packing lists for your trips. Never forget

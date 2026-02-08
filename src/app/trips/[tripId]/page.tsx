@@ -22,7 +22,7 @@ export default function TripDetailPage() {
 
   if (trip === undefined || tripItems === undefined) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background min-h-screen">
         <Header />
         <main className="mx-auto max-w-lg px-4 py-6">
           <p className="text-muted-foreground">Loading...</p>
@@ -32,7 +32,7 @@ export default function TripDetailPage() {
   }
   if (trip === null) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background min-h-screen">
         <Header />
         <main className="mx-auto max-w-lg px-4 py-6">
           <p className="text-muted-foreground">Trip not found.</p>
@@ -47,9 +47,9 @@ export default function TripDetailPage() {
   const allPacked = tripItems.every((item) => item.packed);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <Header />
-      <main className="mx-auto max-w-lg px-4 py-6 space-y-6">
+      <main className="mx-auto max-w-lg space-y-6 px-4 py-6">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">{trip.destination}</h2>
@@ -57,7 +57,7 @@ export default function TripDetailPage() {
               {trip.status}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {trip.departureDate} - {trip.returnDate} | {trip.tripType} |{" "}
             {trip.transportMode}
           </p>
@@ -68,7 +68,7 @@ export default function TripDetailPage() {
         )}
 
         {!trip.weather && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Weather forecast not available for this trip.
           </p>
         )}

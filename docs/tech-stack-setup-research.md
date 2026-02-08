@@ -103,6 +103,7 @@ npx shadcn@latest add dialog
 ### Init Prompts
 
 The `init` command asks:
+
 1. Style (Default or New York)
 2. Base color
 3. Component directory location
@@ -176,7 +177,11 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
 ```tsx
 import { ConvexClientProvider } from "./ConvexClientProvider";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
@@ -222,19 +227,19 @@ export default defineSchema({
 
 ### Available Validator Types
 
-| Type | Syntax | Description |
-|------|--------|-------------|
-| String | `v.string()` | Text values |
-| Number | `v.number()` | Numeric values |
-| Boolean | `v.boolean()` | True/false |
-| Document ID | `v.id("tableName")` | Foreign key reference |
-| Array | `v.array(v.string())` | Array of typed items |
-| Object | `v.object({ key: v.string() })` | Nested object |
-| Optional | `v.optional(v.string())` | Nullable field |
-| Union | `v.union(v.string(), v.number())` | Multiple types |
-| Literal | `v.literal("constant")` | Fixed value |
-| Record | `v.record(v.string(), v.boolean())` | Key-value map |
-| Any | `v.any()` | Unrestricted |
+| Type        | Syntax                              | Description           |
+| ----------- | ----------------------------------- | --------------------- |
+| String      | `v.string()`                        | Text values           |
+| Number      | `v.number()`                        | Numeric values        |
+| Boolean     | `v.boolean()`                       | True/false            |
+| Document ID | `v.id("tableName")`                 | Foreign key reference |
+| Array       | `v.array(v.string())`               | Array of typed items  |
+| Object      | `v.object({ key: v.string() })`     | Nested object         |
+| Optional    | `v.optional(v.string())`            | Nullable field        |
+| Union       | `v.union(v.string(), v.number())`   | Multiple types        |
+| Literal     | `v.literal("constant")`             | Fixed value           |
+| Record      | `v.record(v.string(), v.boolean())` | Key-value map         |
+| Any         | `v.any()`                           | Unrestricted          |
 
 ### Defining Queries
 
@@ -290,7 +295,9 @@ export default function TaskList() {
   const tasks = useQuery(api.tasks.getAll);
   return (
     <div>
-      {tasks?.map(({ _id, text }) => <div key={_id}>{text}</div>)}
+      {tasks?.map(({ _id, text }) => (
+        <div key={_id}>{text}</div>
+      ))}
     </div>
   );
 }
@@ -307,7 +314,10 @@ import { v } from "convex/values";
 export const create = mutation({
   args: { text: v.string() },
   handler: async (ctx, args) => {
-    const newId = await ctx.db.insert("tasks", { text: args.text, isCompleted: false });
+    const newId = await ctx.db.insert("tasks", {
+      text: args.text,
+      isCompleted: false,
+    });
     return newId;
   },
 });
@@ -324,7 +334,10 @@ export const update = mutation({
 export const replace = mutation({
   args: { id: v.id("tasks"), text: v.string(), isCompleted: v.boolean() },
   handler: async (ctx, args) => {
-    await ctx.db.replace("tasks", args.id, { text: args.text, isCompleted: args.isCompleted });
+    await ctx.db.replace("tasks", args.id, {
+      text: args.text,
+      isCompleted: args.isCompleted,
+    });
   },
 });
 
@@ -384,7 +397,7 @@ export const fetchWeather = action({
   args: { latitude: v.number(), longitude: v.number() },
   handler: async (ctx, args) => {
     const response = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${args.latitude}&longitude=${args.longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`
+      `https://api.open-meteo.com/v1/forecast?latitude=${args.latitude}&longitude=${args.longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`,
     );
     const data = await response.json();
     return data;
@@ -396,7 +409,9 @@ export const fetchAndStoreWeather = action({
   args: { tripId: v.id("trips") },
   handler: async (ctx, args) => {
     // Read from DB via internal query
-    const trip = await ctx.runQuery(internal.weather.getTrip, { tripId: args.tripId });
+    const trip = await ctx.runQuery(internal.weather.getTrip, {
+      tripId: args.tripId,
+    });
 
     // Call external API
     const response = await fetch(`https://api.open-meteo.com/v1/forecast?...`);
@@ -451,16 +466,16 @@ export function WeatherButton() {
 
 ### Key Differences: Query vs Mutation vs Action
 
-| Feature | Query | Mutation | Action |
-|---------|-------|----------|--------|
-| Read DB | Yes | Yes | Via `ctx.runQuery()` |
-| Write DB | No | Yes | Via `ctx.runMutation()` |
-| Call external APIs | No | No | Yes (`fetch`) |
-| Deterministic | Yes | Yes | No |
-| Reactive (auto-updates) | Yes | No | No |
-| Transactional | Yes | Yes | No |
-| Client hook | `useQuery` | `useMutation` | `useAction` |
-| Auto-retry on conflict | Yes | Yes | No |
+| Feature                 | Query      | Mutation      | Action                  |
+| ----------------------- | ---------- | ------------- | ----------------------- |
+| Read DB                 | Yes        | Yes           | Via `ctx.runQuery()`    |
+| Write DB                | No         | Yes           | Via `ctx.runMutation()` |
+| Call external APIs      | No         | No            | Yes (`fetch`)           |
+| Deterministic           | Yes        | Yes           | No                      |
+| Reactive (auto-updates) | Yes        | No            | No                      |
+| Transactional           | Yes        | Yes           | No                      |
+| Client hook             | `useQuery` | `useMutation` | `useAction`             |
+| Auto-retry on conflict  | Yes        | Yes           | No                      |
 
 ---
 
@@ -503,10 +518,21 @@ export const config = {
 **`app/layout.tsx`**:
 
 ```tsx
-import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import "./globals.css";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ClerkProvider>
       <html lang="en">
@@ -612,7 +638,11 @@ export default async function ProtectedPage() {
 
    const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
-   export default function ConvexClientProvider({ children }: { children: ReactNode }) {
+   export default function ConvexClientProvider({
+     children,
+   }: {
+     children: ReactNode;
+   }) {
      return (
        <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
          {children}
@@ -629,7 +659,11 @@ export default async function ProtectedPage() {
    import { ClerkProvider } from "@clerk/nextjs";
    import ConvexClientProvider from "@/components/ConvexClientProvider";
 
-   export default function RootLayout({ children }: { children: React.ReactNode }) {
+   export default function RootLayout({
+     children,
+   }: {
+     children: React.ReactNode;
+   }) {
      return (
        <ClerkProvider>
          <html lang="en">
@@ -713,13 +747,13 @@ export const getMyData = query({
 
 **Parameters:**
 
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| `name` | String | Yes | -- | City name (2+ chars exact, 3+ fuzzy) |
-| `count` | Integer | No | 10 | Number of results (max 100) |
-| `language` | String | No | `en` | Result language |
-| `format` | String | No | `json` | Response format (`json` or `protobuf`) |
-| `countryCode` | String | No | -- | ISO-3166 alpha2 country filter |
+| Parameter     | Type    | Required | Default | Description                            |
+| ------------- | ------- | -------- | ------- | -------------------------------------- |
+| `name`        | String  | Yes      | --      | City name (2+ chars exact, 3+ fuzzy)   |
+| `count`       | Integer | No       | 10      | Number of results (max 100)            |
+| `language`    | String  | No       | `en`    | Result language                        |
+| `format`      | String  | No       | `json`  | Response format (`json` or `protobuf`) |
+| `countryCode` | String  | No       | --      | ISO-3166 alpha2 country filter         |
 
 **Example Request:**
 
@@ -759,26 +793,26 @@ https://geocoding-api.open-meteo.com/v1/search?name=Berlin&count=5&language=en
 
 **Required Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `latitude` | Float | WGS84 latitude |
+| Parameter   | Type  | Description     |
+| ----------- | ----- | --------------- |
+| `latitude`  | Float | WGS84 latitude  |
 | `longitude` | Float | WGS84 longitude |
 
 **Optional Parameters:**
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `hourly` | String | -- | Comma-separated hourly variables |
-| `daily` | String | -- | Comma-separated daily variables |
-| `current` | String | -- | Comma-separated current variables |
-| `temperature_unit` | String | `celsius` | `celsius` or `fahrenheit` |
-| `wind_speed_unit` | String | `kmh` | `kmh`, `ms`, `mph`, `kn` |
-| `precipitation_unit` | String | `mm` | `mm` or `inch` |
-| `timezone` | String | `GMT` | IANA timezone or `auto` |
-| `forecast_days` | Integer | 7 | 0-16 days |
-| `past_days` | Integer | 0 | 0-92 days |
-| `start_date` | String | -- | ISO8601 `yyyy-mm-dd` |
-| `end_date` | String | -- | ISO8601 `yyyy-mm-dd` |
+| Parameter            | Type    | Default   | Description                       |
+| -------------------- | ------- | --------- | --------------------------------- |
+| `hourly`             | String  | --        | Comma-separated hourly variables  |
+| `daily`              | String  | --        | Comma-separated daily variables   |
+| `current`            | String  | --        | Comma-separated current variables |
+| `temperature_unit`   | String  | `celsius` | `celsius` or `fahrenheit`         |
+| `wind_speed_unit`    | String  | `kmh`     | `kmh`, `ms`, `mph`, `kn`          |
+| `precipitation_unit` | String  | `mm`      | `mm` or `inch`                    |
+| `timezone`           | String  | `GMT`     | IANA timezone or `auto`           |
+| `forecast_days`      | Integer | 7         | 0-16 days                         |
+| `past_days`          | Integer | 0         | 0-92 days                         |
+| `start_date`         | String  | --        | ISO8601 `yyyy-mm-dd`              |
+| `end_date`           | String  | --        | ISO8601 `yyyy-mm-dd`              |
 
 **Common Hourly Variables:**
 
@@ -863,21 +897,21 @@ https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temp
 
 ### WMO Weather Codes (for `weather_code`)
 
-| Code | Description |
-|------|-------------|
-| 0 | Clear sky |
-| 1, 2, 3 | Mainly clear, Partly cloudy, Overcast |
-| 45, 48 | Fog, Depositing rime fog |
-| 51, 53, 55 | Drizzle: light, moderate, dense |
-| 56, 57 | Freezing drizzle: light, dense |
-| 61, 63, 65 | Rain: slight, moderate, heavy |
-| 66, 67 | Freezing rain: light, heavy |
-| 71, 73, 75 | Snowfall: slight, moderate, heavy |
-| 77 | Snow grains |
+| Code       | Description                             |
+| ---------- | --------------------------------------- |
+| 0          | Clear sky                               |
+| 1, 2, 3    | Mainly clear, Partly cloudy, Overcast   |
+| 45, 48     | Fog, Depositing rime fog                |
+| 51, 53, 55 | Drizzle: light, moderate, dense         |
+| 56, 57     | Freezing drizzle: light, dense          |
+| 61, 63, 65 | Rain: slight, moderate, heavy           |
+| 66, 67     | Freezing rain: light, heavy             |
+| 71, 73, 75 | Snowfall: slight, moderate, heavy       |
+| 77         | Snow grains                             |
 | 80, 81, 82 | Rain showers: slight, moderate, violent |
-| 85, 86 | Snow showers: slight, heavy |
-| 95 | Thunderstorm: slight or moderate |
-| 96, 99 | Thunderstorm with hail: slight, heavy |
+| 85, 86     | Snow showers: slight, heavy             |
+| 95         | Thunderstorm: slight or moderate        |
+| 96, 99     | Thunderstorm with hail: slight, heavy   |
 
 ### Key Notes
 
@@ -914,6 +948,7 @@ npm run dev
 ```
 
 Then configure:
+
 1. Create `convex/schema.ts` with your data model.
 2. Create Clerk account and JWT template named "convex".
 3. Add environment variables to `.env.local`.

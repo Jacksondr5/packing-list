@@ -23,7 +23,7 @@ export default function WizardShell({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="text-muted-foreground flex justify-between text-sm">
           <span>{steps[currentStep]}</span>
           <span>
             {currentStep + 1} / {steps.length}

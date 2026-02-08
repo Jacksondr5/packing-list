@@ -20,13 +20,13 @@ export default defineSchema({
         rain: v.optional(v.boolean()),
         snow: v.optional(v.boolean()),
       }),
-      v.null()
+      v.null(),
     ),
     quantityRule: v.object({
       type: v.union(
         v.literal("perDay"),
         v.literal("perNDays"),
-        v.literal("fixed")
+        v.literal("fixed"),
       ),
       value: v.number(),
     }),
@@ -36,11 +36,7 @@ export default defineSchema({
     userId: v.id("users"),
     name: v.string(),
     transportModes: v.array(v.string()),
-    size: v.union(
-      v.literal("small"),
-      v.literal("medium"),
-      v.literal("large")
-    ),
+    size: v.union(v.literal("small"), v.literal("medium"), v.literal("large")),
   }).index("by_user", ["userId"]),
 
   trips: defineTable({
@@ -64,16 +60,16 @@ export default defineSchema({
             snowfall: v.number(),
             weatherCode: v.number(),
             condition: v.string(),
-          })
+          }),
         ),
         fetchedAt: v.number(),
       }),
-      v.null()
+      v.null(),
     ),
     status: v.union(
       v.literal("planning"),
       v.literal("packing"),
-      v.literal("completed")
+      v.literal("completed"),
     ),
   })
     .index("by_user", ["userId"])
