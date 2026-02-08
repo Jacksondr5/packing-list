@@ -1,13 +1,39 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
+interface GeocodingResult {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  country: string;
+  admin1?: string;
+}
+
+interface GeocodingResponse {
+  results?: GeocodingResult[];
+}
+
+interface ForecastDaily {
+  time: string[];
+  temperature_2m_max: number[];
+  temperature_2m_min: number[];
+  precipitation_probability_max: number[];
+  snowfall_sum: number[];
+  weather_code: number[];
+}
+
+interface ForecastResponse {
+  daily: ForecastDaily;
+}
+
 export const geocodeCity = action({
   args: { cityName: v.string() },
   handler: async (_ctx, args) => {
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.cityName)}&count=5&language=en`
     );
-    const data = await response.json();
+    const data: GeocodingResponse = await response.json();
     return data.results ?? [];
   },
 });
@@ -36,6 +62,7 @@ export const fetchForecast = action({
     if (!response.ok) {
       throw new Error(`Weather API error: ${response.status}`);
     }
-    return await response.json();
+    const data: ForecastResponse = await response.json();
+    return data;
   },
 });

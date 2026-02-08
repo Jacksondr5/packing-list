@@ -12,8 +12,7 @@ interface QuantityRule {
   value: number;
 }
 
-interface MasterItem {
-  _id: string;
+export interface MasterItem {
   name: string;
   category: string;
   tripTypes: string[];
@@ -21,7 +20,7 @@ interface MasterItem {
   quantityRule: QuantityRule;
 }
 
-interface DailyForecast {
+export interface DailyForecast {
   date: string;
   highTemp: number;
   lowTemp: number;
@@ -34,7 +33,7 @@ interface DailyForecast {
 interface TripDetails {
   tripType: string;
   tripDays: number;
-  weather: { dailyForecasts: DailyForecast[] } | null;
+  weather: { dailyForecasts: DailyForecast[]; fetchedAt?: number } | null;
 }
 
 interface GeneratedItem {

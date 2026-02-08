@@ -10,7 +10,7 @@ import DestinationStep from "@/components/wizard/DestinationStep";
 import DatesStep from "@/components/wizard/DatesStep";
 import TripTypeStep from "@/components/wizard/TripTypeStep";
 import TransportStep from "@/components/wizard/TransportStep";
-import { generatePackingList } from "@/lib/generatePackingList";
+import { generatePackingList, type DailyForecast } from "@/lib/generatePackingList";
 import { getConditionFromCode } from "@/lib/weatherCodes";
 
 const STEPS = ["Destination", "Dates", "Trip Type", "Transport"];
@@ -67,7 +67,7 @@ export default function NewTripPage() {
 
     try {
       // Fetch weather
-      let weather = null;
+      let weather: { dailyForecasts: DailyForecast[]; fetchedAt: number } | null = null;
       try {
         const forecastData = await fetchForecast({
           latitude: destination.latitude,
@@ -125,8 +125,7 @@ export default function NewTripPage() {
       });
 
       // Generate packing list
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const packingList = generatePackingList(items as any, {
+      const packingList = generatePackingList(items, {
         tripType,
         tripDays,
         weather,
