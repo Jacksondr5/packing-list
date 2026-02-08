@@ -34,17 +34,13 @@ export const geocodeCity = action({
     const timeout = setTimeout(() => controller.abort(), 8000);
     const response = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.cityName)}&count=5&language=en`,
-      { signal: controller.signal }
+      { signal: controller.signal },
     );
-<<<<<<< HEAD
-    const data: GeocodingResponse = await response.json();
-=======
     clearTimeout(timeout);
     if (!response.ok) {
       throw new Error(`Geocoding API error: ${response.status}`);
     }
-    const data = await response.json();
->>>>>>> 71b6377bd1a07132fa9d4380cfcf73761a045b67
+    const data: GeocodingResponse = await response.json();
     return data.results ?? [];
   },
 });
@@ -64,7 +60,7 @@ export const fetchForecast = action({
     url.searchParams.set("longitude", String(args.longitude));
     url.searchParams.set(
       "daily",
-      "temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum,weather_code"
+      "temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum,weather_code",
     );
     url.searchParams.set("temperature_unit", "fahrenheit");
     url.searchParams.set("timezone", "auto");
