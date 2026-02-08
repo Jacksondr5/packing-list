@@ -145,6 +145,13 @@ export default function NewTripPage() {
       }
 
       router.push(`/trips/${tripId}`);
+    } catch (error) {
+      console.error("Failed to create trip:", error);
+      alert(
+        error instanceof Error
+          ? `Failed to create trip: ${error.message}`
+          : "Failed to create trip. Please try again."
+      );
     } finally {
       setGenerating(false);
     }
