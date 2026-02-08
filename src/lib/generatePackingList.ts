@@ -98,6 +98,12 @@ export function generatePackingList(
     }
 
     // 3. Calculate quantity
+    if (tripDays <= 0) {
+      throw new Error("tripDays must be > 0");
+    }
+    if (item.quantityRule.value <= 0) {
+      throw new Error("quantityRule.value must be > 0");
+    }
     let quantity: number;
     switch (item.quantityRule.type) {
       case "perDay":

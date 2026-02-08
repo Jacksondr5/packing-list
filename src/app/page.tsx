@@ -21,6 +21,7 @@ function TripList() {
     getOrCreateUser();
   }, [getOrCreateUser]);
 
+  const tripsLoaded = trips !== undefined;
   const activeTrips = trips?.filter((t) => t.status !== "completed") ?? [];
   const pastTrips = trips?.filter((t) => t.status === "completed") ?? [];
 
@@ -33,7 +34,7 @@ function TripList() {
         </Button>
       </div>
 
-      {activeTrips.length === 0 && pastTrips.length === 0 && (
+      {tripsLoaded && activeTrips.length === 0 && pastTrips.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
             No trips yet. Create your first trip to get started!

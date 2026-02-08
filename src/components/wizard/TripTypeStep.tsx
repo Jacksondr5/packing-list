@@ -42,6 +42,15 @@ export default function TripTypeStep({
       {TRIP_TYPES.map((type) => (
         <Card
           key={type.value}
+          role="button"
+          tabIndex={0}
+          aria-pressed={selected === type.value}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onSelect(type.value);
+            }
+          }}
           className={`cursor-pointer transition-colors hover:bg-accent ${
             selected === type.value ? "border-primary bg-primary/5" : ""
           }`}

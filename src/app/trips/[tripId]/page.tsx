@@ -20,12 +20,22 @@ export default function TripDetailPage() {
   const tripItems = useQuery(api.tripItems.listByTrip, { tripId });
   const updateStatus = useMutation(api.trips.updateStatus);
 
-  if (!trip || !tripItems) {
+  if (trip === undefined || tripItems === undefined) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <main className="mx-auto max-w-lg px-4 py-6">
           <p className="text-muted-foreground">Loading...</p>
+        </main>
+      </div>
+    );
+  }
+  if (trip === null) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="mx-auto max-w-lg px-4 py-6">
+          <p className="text-muted-foreground">Trip not found.</p>
         </main>
       </div>
     );

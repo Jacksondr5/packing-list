@@ -37,14 +37,13 @@ export default function DestinationStep({
 
   const handleSearch = (value: string) => {
     setQuery(value);
-    if (value.length < 2) {
-      setResults([]);
-      return;
-    }
-
-    // Clear any pending debounce
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
+    }
+    if (value.length < 2) {
+      setResults([]);
+      setSearching(false);
+      return;
     }
 
     debounceRef.current = setTimeout(async () => {
