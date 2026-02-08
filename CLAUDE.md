@@ -8,12 +8,13 @@ PackPal — a weather-aware packing list generator built with Next.js 16 (App Ro
 
 ## Commands
 
-- `pnpm dev` — start Next.js dev server (uses Turbopack) + run `npx convex dev` separately for the Convex backend
+- `pnpm dev` — start Next.js dev server (uses Turbopack) + run `pnpm convex dev` separately for the Convex backend
 - `pnpm build` — production build
 - `pnpm lint` — run ESLint (flat config, v9)
-- `npx convex dev` — start Convex development server (watches and deploys functions)
-- `npx convex deploy` — deploy Convex functions to production
-- `npx shadcn@latest add <component>` — add new ShadCN UI components
+- `pnpm test` — run unit tests
+- `pnpm convex dev` — start Convex development server (watches and deploys functions)
+- `pnpm convex deploy` — deploy Convex functions to production
+- `pnpm shadcn@latest add <component>` — add new ShadCN UI components
 
 No test framework is currently configured.
 
