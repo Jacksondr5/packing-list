@@ -1,37 +1,111 @@
+"use client";
+
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { Authenticated, Unauthenticated } from "convex/react";
+import { useEffect } from "react";
+import Header from "@/components/Header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 
-export default async function Home() {
+function TripList() {
+  const getOrCreateUser = useMutation(api.users.getOrCreateUser);
+  const user = useQuery(api.users.getCurrentUser);
+  const trips = useQuery(
+    api.trips.listByUser,
+    user ? { userId: user._id } : "skip",
+  );
+
+  useEffect(() => {
+    getOrCreateUser();
+  }, [getOrCreateUser]);
+
+  const tripsLoaded = trips !== undefined;
+  const activeTrips = trips?.filter((t) => t.status !== "completed") ?? [];
+  const pastTrips = trips?.filter((t) => t.status === "completed") ?? [];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App!
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
-            </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">My Trips</h2>
+        <Button asChild>
+          <Link href="/trips/new">New Trip</Link>
+        </Button>
       </div>
-    </main>
+
+      {tripsLoaded && activeTrips.length === 0 && pastTrips.length === 0 && (
+        <Card>
+          <CardContent className="text-muted-foreground py-8 text-center">
+            No trips yet. Create your first trip to get started!
+          </CardContent>
+        </Card>
+      )}
+
+      {activeTrips.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-muted-foreground text-sm font-medium">Active</h3>
+          {activeTrips.map((trip) => (
+            <Link key={trip._id} href={`/trips/${trip._id}`}>
+              <Card className="hover:bg-accent transition-colors">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">
+                    {trip.destination}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground text-sm">
+                  {trip.departureDate} - {trip.returnDate} | {trip.tripType} |{" "}
+                  {trip.transportMode}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {pastTrips.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-muted-foreground text-sm font-medium">
+            Past Trips
+          </h3>
+          {pastTrips.map((trip) => (
+            <Link key={trip._id} href={`/trips/${trip._id}`}>
+              <Card className="hover:bg-accent opacity-60 transition-colors">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">
+                    {trip.destination}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground text-sm">
+                  {trip.departureDate} - {trip.returnDate} | {trip.tripType}
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="bg-background min-h-screen">
+      <Header />
+      <main className="mx-auto max-w-lg px-4 py-6">
+        <Unauthenticated>
+          <div className="space-y-4 py-12 text-center">
+            <h2 className="text-2xl font-bold">Smart Packing Lists</h2>
+            <p className="text-muted-foreground">
+              Generate weather-aware packing lists for your trips. Never forget
+              an item again.
+            </p>
+          </div>
+        </Unauthenticated>
+        <Authenticated>
+          <TripList />
+        </Authenticated>
+      </main>
+    </div>
   );
 }
