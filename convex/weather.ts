@@ -4,9 +4,16 @@ import { v } from "convex/values";
 export const geocodeCity = action({
   args: { cityName: v.string() },
   handler: async (_ctx, args) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.cityName)}&count=5&language=en`
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.cityName)}&count=5&language=en`,
+      { signal: controller.signal }
     );
+    clearTimeout(timeout);
+    if (!response.ok) {
+      throw new Error(`Geocoding API error: ${response.status}`);
+    }
     const data = await response.json();
     return data.results ?? [];
   },
@@ -20,6 +27,8 @@ export const fetchForecast = action({
     endDate: v.string(),
   },
   handler: async (_ctx, args) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
     const url = new URL("https://api.open-meteo.com/v1/forecast");
     url.searchParams.set("latitude", String(args.latitude));
     url.searchParams.set("longitude", String(args.longitude));
@@ -32,7 +41,8 @@ export const fetchForecast = action({
     url.searchParams.set("start_date", args.startDate);
     url.searchParams.set("end_date", args.endDate);
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), { signal: controller.signal });
+    clearTimeout(timeout);
     if (!response.ok) {
       throw new Error(`Weather API error: ${response.status}`);
     }
