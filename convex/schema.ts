@@ -15,8 +15,8 @@ export default defineSchema({
     tripTypes: v.array(v.string()),
     weatherConditions: v.union(
       v.object({
-        minTemp: v.optional(v.number()),
-        maxTemp: v.optional(v.number()),
+        temperature: v.optional(v.number()),
+        direction: v.optional(v.union(v.literal("above"), v.literal("below"))),
         rain: v.optional(v.boolean()),
         snow: v.optional(v.boolean()),
       }),

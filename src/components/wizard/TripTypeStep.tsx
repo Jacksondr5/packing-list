@@ -1,29 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-
-const TRIP_TYPES = [
-  {
-    value: "business",
-    label: "Business",
-    description: "Work meetings, conferences",
-  },
-  {
-    value: "vacation",
-    label: "Vacation / Beach",
-    description: "Relaxation, sun, swimming",
-  },
-  {
-    value: "camping",
-    label: "Camping / Outdoors",
-    description: "Hiking, nature, adventure",
-  },
-  {
-    value: "cityBreak",
-    label: "City Break",
-    description: "Sightseeing, culture, food",
-  },
-];
+import { WIZARD_TRIP_TYPES } from "@/lib/tripTypes";
 
 interface TripTypeStepProps {
   selected: string;
@@ -39,7 +17,7 @@ export default function TripTypeStep({
       <p className="text-muted-foreground text-sm">
         What kind of trip is this?
       </p>
-      {TRIP_TYPES.map((type) => (
+      {WIZARD_TRIP_TYPES.map((type) => (
         <Card
           key={type.value}
           role="button"
