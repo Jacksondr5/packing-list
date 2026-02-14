@@ -158,7 +158,7 @@ NEXT_PUBLIC_CONVEX_URL=https://your-project-123.convex.cloud
 
 ### Provider Setup
 
-**`app/ConvexClientProvider.tsx`** (Client Component):
+**`components/ConvexClientProvider.tsx`** (Client Component):
 
 ```tsx
 "use client";
@@ -175,7 +175,7 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
 **`app/layout.tsx`**:
 
 ```tsx
-import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 
 export default function RootLayout({
   children,
@@ -757,7 +757,7 @@ export const getMyData = query({
 
 **Example Request:**
 
-```
+```text
 https://geocoding-api.open-meteo.com/v1/search?name=Berlin&count=5&language=en
 ```
 
@@ -853,7 +853,7 @@ https://geocoding-api.open-meteo.com/v1/search?name=Berlin&count=5&language=en
 
 **Example Request:**
 
-```
+```text
 https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&current=temperature_2m,weather_code&timezone=auto&forecast_days=7
 ```
 
