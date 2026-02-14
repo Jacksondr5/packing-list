@@ -121,6 +121,11 @@ function EditItemDialog({
         }
       : null;
 
+    const normalizedWeatherConditions =
+      weatherConditions && Object.keys(weatherConditions).length === 0
+        ? null
+        : weatherConditions;
+
     await updateItem({
       id: item._id,
       name: form.name,
@@ -130,7 +135,7 @@ function EditItemDialog({
         type: form.quantityRuleType,
         value: form.quantityRuleValue,
       },
-      weatherConditions,
+      weatherConditions: normalizedWeatherConditions,
     });
     onClose();
   };
