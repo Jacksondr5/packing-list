@@ -89,6 +89,8 @@ function EditItemDialog({
 }) {
   const updateItem = useMutation(api.items.update);
   const [form, setForm] = useState<EditFormState>(() => initEditForm(item));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleTripType = (value: string) => {
     if (value === "all") {
@@ -126,18 +128,26 @@ function EditItemDialog({
         ? null
         : weatherConditions;
 
-    await updateItem({
-      id: item._id,
-      name: form.name,
-      category: form.category,
-      tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
-      quantityRule: {
-        type: form.quantityRuleType,
-        value: form.quantityRuleValue,
-      },
-      weatherConditions: normalizedWeatherConditions,
-    });
-    onClose();
+    setSaving(true);
+    setError(null);
+    try {
+      await updateItem({
+        id: item._id,
+        name: form.name,
+        category: form.category,
+        tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
+        quantityRule: {
+          type: form.quantityRuleType,
+          value: form.quantityRuleValue,
+        },
+        weatherConditions: normalizedWeatherConditions,
+      });
+      onClose();
+    } catch {
+      setError("Failed to save item. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -317,8 +327,11 @@ function EditItemDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!form.name || !form.category}>
-            Save
+          {error && (
+            <p className="text-sm text-destructive">{error}</p>
+          )}
+          <Button onClick={handleSave} disabled={!form.name || !form.category || saving}>
+            {saving ? "Saving…" : "Save"}
           </Button>
         </div>
       </div>
