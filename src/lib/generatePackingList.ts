@@ -1,8 +1,8 @@
 import { isRainCode, isSnowCode } from "./weatherCodes";
 
 interface WeatherConditions {
-  minTemp?: number;
-  maxTemp?: number;
+  temperature?: number;
+  direction?: "above" | "below";
   rain?: boolean;
   snow?: boolean;
 }
@@ -48,16 +48,12 @@ export function generatePackingList(
 ): GeneratedItem[] {
   const { tripType, tripDays, weather } = trip;
 
-  // Compute weather summary across ALL forecast days
-  let minHighTemp = Infinity; // lowest high temp across all days
-  let maxLowTemp = -Infinity; // highest low temp across all days
   let hasRain = false;
   let hasSnow = false;
+  const dailyForecasts = weather?.dailyForecasts ?? [];
 
-  if (weather?.dailyForecasts.length) {
-    for (const day of weather.dailyForecasts) {
-      if (day.highTemp < minHighTemp) minHighTemp = day.highTemp;
-      if (day.lowTemp > maxLowTemp) maxLowTemp = day.lowTemp;
+  if (dailyForecasts.length) {
+    for (const day of dailyForecasts) {
       if (day.precipProbability > 40) hasRain = true;
       if (isRainCode(day.weatherCode)) hasRain = true;
       if (day.snowfall > 0) hasSnow = true;
@@ -83,13 +79,13 @@ export function generatePackingList(
       const wc = item.weatherConditions;
       let weatherMatch = false;
 
-      // minTemp: suggest when forecast high is at or below this (cold gear)
-      if (wc.minTemp !== undefined && minHighTemp <= wc.minTemp) {
-        weatherMatch = true;
-      }
-      // maxTemp: suggest when forecast low is at or above this (warm gear)
-      if (wc.maxTemp !== undefined && maxLowTemp >= wc.maxTemp) {
-        weatherMatch = true;
+      if (wc.temperature !== undefined && wc.direction !== undefined) {
+        const threshold = wc.temperature;
+        weatherMatch = dailyForecasts.some((day) =>
+          wc.direction === "above"
+            ? day.highTemp >= threshold || day.lowTemp >= threshold
+            : day.highTemp <= threshold || day.lowTemp <= threshold,
+        );
       }
       if (wc.rain && hasRain) weatherMatch = true;
       if (wc.snow && hasSnow) weatherMatch = true;

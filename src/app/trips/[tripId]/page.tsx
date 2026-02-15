@@ -10,6 +10,7 @@ import WeatherSummary from "@/components/WeatherSummary";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { getTripWeatherWarning } from "@/lib/weatherWarnings";
 
 export default function TripDetailPage() {
   const params = useParams();
@@ -45,6 +46,7 @@ export default function TripDetailPage() {
   const isPacking = trip.status === "packing";
   const isPlanning = trip.status === "planning";
   const allPacked = tripItems.every((item) => item.packed);
+  const weatherWarning = getTripWeatherWarning(trip.weather);
 
   return (
     <div className="bg-background min-h-screen">
@@ -67,10 +69,8 @@ export default function TripDetailPage() {
           <WeatherSummary forecasts={trip.weather.dailyForecasts} />
         )}
 
-        {!trip.weather && (
-          <p className="text-muted-foreground text-sm">
-            Weather forecast not available for this trip.
-          </p>
+        {weatherWarning && (
+          <p className="text-sm text-amber-700">{weatherWarning}</p>
         )}
 
         {isPlanning && (

@@ -32,7 +32,7 @@ export const DEFAULT_ITEMS = [
     name: "Shorts",
     category: "Clothing",
     tripTypes: ["vacation", "camping", "cityBreak"],
-    weatherConditions: { maxTemp: 75 },
+    weatherConditions: { temperature: 75, direction: "above" as const },
     quantityRule: { type: "perNDays" as const, value: 2 },
   },
   {
@@ -46,14 +46,14 @@ export const DEFAULT_ITEMS = [
     name: "Light jacket",
     category: "Clothing",
     tripTypes: ["all"],
-    weatherConditions: { minTemp: 65 },
+    weatherConditions: { temperature: 65, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
     name: "Winter coat",
     category: "Clothing",
     tripTypes: ["all"],
-    weatherConditions: { minTemp: 40 },
+    weatherConditions: { temperature: 40, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
@@ -67,7 +67,7 @@ export const DEFAULT_ITEMS = [
     name: "Sweater/Hoodie",
     category: "Clothing",
     tripTypes: ["all"],
-    weatherConditions: { minTemp: 60 },
+    weatherConditions: { temperature: 60, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
@@ -109,7 +109,7 @@ export const DEFAULT_ITEMS = [
     name: "Sandals/Flip-flops",
     category: "Clothing",
     tripTypes: ["vacation", "camping"],
-    weatherConditions: { maxTemp: 70 },
+    weatherConditions: { temperature: 70, direction: "above" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
@@ -123,7 +123,7 @@ export const DEFAULT_ITEMS = [
     name: "Swimsuit",
     category: "Clothing",
     tripTypes: ["vacation"],
-    weatherConditions: { maxTemp: 70 },
+    weatherConditions: { temperature: 70, direction: "above" as const },
     quantityRule: { type: "fixed" as const, value: 2 },
   },
   {
@@ -137,28 +137,28 @@ export const DEFAULT_ITEMS = [
     name: "Thermal underwear",
     category: "Clothing",
     tripTypes: ["camping", "cityBreak"],
-    weatherConditions: { minTemp: 35 },
+    weatherConditions: { temperature: 35, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 2 },
   },
   {
     name: "Warm hat/Beanie",
     category: "Clothing",
     tripTypes: ["all"],
-    weatherConditions: { minTemp: 40 },
+    weatherConditions: { temperature: 40, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
     name: "Gloves",
     category: "Clothing",
     tripTypes: ["all"],
-    weatherConditions: { minTemp: 40 },
+    weatherConditions: { temperature: 40, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
     name: "Scarf",
     category: "Clothing",
     tripTypes: ["all"],
-    weatherConditions: { minTemp: 45 },
+    weatherConditions: { temperature: 45, direction: "below" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
@@ -230,7 +230,7 @@ export const DEFAULT_ITEMS = [
     name: "Sunscreen",
     category: "Toiletries",
     tripTypes: ["vacation", "camping", "cityBreak"],
-    weatherConditions: { maxTemp: 65 },
+    weatherConditions: { temperature: 65, direction: "above" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
@@ -251,7 +251,7 @@ export const DEFAULT_ITEMS = [
     name: "Insect repellent",
     category: "Toiletries",
     tripTypes: ["camping", "vacation"],
-    weatherConditions: { maxTemp: 60 },
+    weatherConditions: { temperature: 60, direction: "above" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
@@ -439,7 +439,7 @@ export const DEFAULT_ITEMS = [
     name: "Sun hat",
     category: "Accessories",
     tripTypes: ["vacation", "camping"],
-    weatherConditions: { maxTemp: 75 },
+    weatherConditions: { temperature: 75, direction: "above" as const },
     quantityRule: { type: "fixed" as const, value: 1 },
   },
   {
