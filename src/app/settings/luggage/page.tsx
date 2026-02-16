@@ -72,22 +72,23 @@ export default function LuggageSettingsPage() {
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Name</Label>
+                <Label htmlFor="luggage-name">Name</Label>
                 <Input
+                  id="luggage-name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Blue carry-on"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Size</Label>
+                <Label htmlFor="luggage-size">Size</Label>
                 <Select
                   value={size}
                   onValueChange={(v) =>
                     setSize(v as "small" | "medium" | "large")
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="luggage-size">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -116,7 +117,7 @@ export default function LuggageSettingsPage() {
               </div>
               <Button
                 onClick={handleAdd}
-                disabled={!name || modes.length === 0}
+                disabled={!user || !name || modes.length === 0}
               >
                 Add
               </Button>
