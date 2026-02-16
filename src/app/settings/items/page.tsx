@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import type { Doc } from "../../../../convex/_generated/dataModel";
-import Header from "@/components/Header";
+import AppShell from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +38,11 @@ const CATEGORIES = [
 
 const QUANTITY_RULE_TYPES = [
   { value: "fixed", label: "Fixed", description: "Always pack this many" },
-  { value: "perDay", label: "Per Day", description: "This many per day of trip" },
+  {
+    value: "perDay",
+    label: "Per Day",
+    description: "This many per day of trip",
+  },
   {
     value: "perNDays",
     label: "Per N Days",
@@ -209,9 +213,12 @@ function EditItemDialog({
             </SelectContent>
           </Select>
           <div className="space-y-1">
-            <Label className="text-muted-foreground text-xs">
-              {QUANTITY_RULE_TYPES.find((r) => r.value === form.quantityRuleType)
-                ?.description}
+            <Label className="text-xs text-muted-foreground">
+              {
+                QUANTITY_RULE_TYPES.find(
+                  (r) => r.value === form.quantityRuleType,
+                )?.description
+              }
             </Label>
             <Input
               type="number"
@@ -232,10 +239,7 @@ function EditItemDialog({
           <Label>Trip Types</Label>
           <div className="space-y-2">
             {SETTINGS_TRIP_TYPES.map((tt) => (
-              <label
-                key={tt.value}
-                className="flex items-center gap-2 text-sm"
-              >
+              <label key={tt.value} className="flex items-center gap-2 text-sm">
                 <Checkbox
                   checked={form.tripTypes.includes(tt.value)}
                   onCheckedChange={() => toggleTripType(tt.value)}
@@ -258,7 +262,7 @@ function EditItemDialog({
             Weather Conditions
           </label>
           {form.weatherEnabled && (
-            <div className="border-muted space-y-3 rounded-md border p-3">
+            <div className="space-y-3 rounded-md border border-muted p-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Temperature (°F)</Label>
@@ -270,9 +274,9 @@ function EditItemDialog({
                       setForm((f) => ({ ...f, temperature: e.target.value }))
                     }
                   />
-                  <p className="text-muted-foreground text-xs">
-                    Include when forecast high or low is {form.temperatureDirection}
-                    {" "}this
+                  <p className="text-xs text-muted-foreground">
+                    Include when forecast high or low is{" "}
+                    {form.temperatureDirection} this
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -294,7 +298,7 @@ function EditItemDialog({
                       <SelectItem value="below">Below</SelectItem>
                     </SelectContent>
                   </Select>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     Example: above 70°F or below 40°F
                   </p>
                 </div>
@@ -327,10 +331,11 @@ function EditItemDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
-          <Button onClick={handleSave} disabled={!form.name || !form.category || saving}>
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          <Button
+            onClick={handleSave}
+            disabled={!form.name || !form.category || saving}
+          >
             {saving ? "Saving…" : "Save"}
           </Button>
         </div>
@@ -388,132 +393,129 @@ export default function ItemsSettingsPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <Header />
-      <main className="mx-auto max-w-lg space-y-4 px-4 py-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Item Library</h2>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm">Add Item</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Item</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Name</Label>
-                  <Input
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder="Item name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Category</Label>
-                  <Select value={newCategory} onValueChange={setNewCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CATEGORIES.map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                          {cat}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button onClick={handleAdd} disabled={!newName || !newCategory}>
-                  Add
-                </Button>
+    <AppShell className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Item Library</h2>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button size="sm">Add Item</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Item</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Name</Label>
+                <Input
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Item name"
+                />
               </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select value={newCategory} onValueChange={setNewCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={handleAdd} disabled={!newName || !newCategory}>
+                Add
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-        <Select value={filterCategory} onValueChange={setFilterCategory}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
-            {CATEGORIES.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <Select value={filterCategory} onValueChange={setFilterCategory}>
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All categories</SelectItem>
+          {CATEGORIES.map((cat) => (
+            <SelectItem key={cat} value={cat}>
+              {cat}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        <p className="text-muted-foreground text-sm">
-          {filteredItems?.length ?? 0} items
-        </p>
+      <p className="text-sm text-muted-foreground">
+        {filteredItems?.length ?? 0} items
+      </p>
 
-        <div className="space-y-1">
-          {filteredItems?.map((item) => (
-            <div
-              key={item._id}
-              className="bg-card flex items-center justify-between rounded-lg p-3"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium">{item.name}</p>
-                <div className="mt-1 flex flex-wrap gap-1">
-                  <Badge variant="secondary" className="text-xs">
-                    {item.category}
-                  </Badge>
+      <div className="space-y-1">
+        {filteredItems?.map((item) => (
+          <div
+            key={item._id}
+            className="flex items-center justify-between rounded-lg bg-card p-3"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium">{item.name}</p>
+              <div className="mt-1 flex flex-wrap gap-1">
+                <Badge variant="secondary" className="text-xs">
+                  {item.category}
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  {formatQuantityRule(item.quantityRule)}
+                </Badge>
+                {item.tripTypes.includes("all") ? null : (
                   <Badge variant="outline" className="text-xs">
-                    {formatQuantityRule(item.quantityRule)}
+                    {item.tripTypes.length} trip type
+                    {item.tripTypes.length !== 1 ? "s" : ""}
                   </Badge>
-                  {item.tripTypes.includes("all") ? null : (
-                    <Badge variant="outline" className="text-xs">
-                      {item.tripTypes.length} trip type
-                      {item.tripTypes.length !== 1 ? "s" : ""}
-                    </Badge>
-                  )}
-                  {item.weatherConditions !== null && (
-                    <Badge variant="outline" className="text-xs">
-                      Weather
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditingItem(item)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeItem({ id: item._id })}
-                >
-                  Remove
-                </Button>
+                )}
+                {item.weatherConditions !== null && (
+                  <Badge variant="outline" className="text-xs">
+                    Weather
+                  </Badge>
+                )}
               </div>
             </div>
-          ))}
-        </div>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEditingItem(item)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => removeItem({ id: item._id })}
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-        <Dialog
-          open={editingItem !== null}
-          onOpenChange={(open) => {
-            if (!open) setEditingItem(null);
-          }}
-        >
-          {editingItem && (
-            <EditItemDialog
-              key={editingItem._id}
-              item={editingItem}
-              onClose={() => setEditingItem(null)}
-            />
-          )}
-        </Dialog>
-      </main>
-    </div>
+      <Dialog
+        open={editingItem !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditingItem(null);
+        }}
+      >
+        {editingItem && (
+          <EditItemDialog
+            key={editingItem._id}
+            item={editingItem}
+            onClose={() => setEditingItem(null)}
+          />
+        )}
+      </Dialog>
+    </AppShell>
   );
 }

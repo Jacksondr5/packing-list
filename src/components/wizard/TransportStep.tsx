@@ -25,7 +25,7 @@ export default function TransportStep({
       {TRANSPORT_MODES.map((mode) => (
         <Card
           key={mode.value}
-          className={`hover:bg-accent cursor-pointer transition-colors ${
+          className={`cursor-pointer transition-colors hover:bg-accent/80 active:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
             selected === mode.value ? "border-primary bg-primary/5" : ""
           }`}
           role="button"

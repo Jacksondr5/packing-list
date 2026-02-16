@@ -4,6 +4,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import { Id } from "../../convex/_generated/dataModel";
 
 interface TripItem {
@@ -74,17 +75,31 @@ export default function PackingChecklist({
             </div>
             <div className="space-y-1">
               {categoryItems.map((item) => (
-                <button
+                <div
                   key={item._id}
-                  className={`flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors ${
+                  role="button"
+                  tabIndex={readOnly ? -1 : 0}
+                  aria-disabled={readOnly}
+                  aria-pressed={item.packed}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors",
                     item.packed
                       ? "bg-muted/50 text-muted-foreground"
-                      : "bg-card hover:bg-accent"
-                  } ${readOnly ? "cursor-default" : "active:bg-accent cursor-pointer"}`}
+                      : "bg-card hover:bg-accent/80 active:bg-accent/90",
+                    readOnly
+                      ? "cursor-default"
+                      : "cursor-pointer focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none",
+                  )}
                   onClick={() => {
                     if (!readOnly) togglePacked({ id: item._id });
                   }}
-                  disabled={readOnly}
+                  onKeyDown={(e) => {
+                    if (readOnly) return;
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      togglePacked({ id: item._id });
+                    }
+                  }}
                 >
                   <Checkbox
                     checked={item.packed}
@@ -101,7 +116,7 @@ export default function PackingChecklist({
                       x{item.quantity}
                     </span>
                   )}
-                </button>
+                </div>
               ))}
             </div>
           </div>

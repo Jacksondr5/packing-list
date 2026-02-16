@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getLocalDateString } from "@/lib/date";
 
 interface DatesStepProps {
   departureDate: string;
@@ -16,7 +17,7 @@ export default function DatesStep({
   onDepartureChange,
   onReturnChange,
 }: DatesStepProps) {
-  const today = new Date().toISOString().split("T")[0];
+  const today = getLocalDateString();
 
   return (
     <div className="space-y-4">
@@ -41,7 +42,7 @@ export default function DatesStep({
         />
       </div>
       {departureDate && returnDate && (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {Math.ceil(
             (new Date(returnDate).getTime() -
               new Date(departureDate).getTime()) /
