@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useAction } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
+import AppShell from "@/components/AppShell";
 import WizardShell from "@/components/wizard/WizardShell";
 import DestinationStep from "@/components/wizard/DestinationStep";
 import DatesStep from "@/components/wizard/DatesStep";
@@ -15,6 +15,7 @@ import {
   type DailyForecast,
 } from "@/lib/generatePackingList";
 import { getConditionFromCode } from "@/lib/weatherCodes";
+import { getCreateTripErrorMessage } from "@/lib/createTripError";
 
 const STEPS = ["Destination", "Dates", "Trip Type", "Transport"];
 
@@ -45,6 +46,7 @@ export default function NewTripPage() {
   const [tripType, setTripType] = useState("");
   const [transportMode, setTransportMode] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const canProceedForStep = (step: number) => {
     switch (step) {
@@ -68,6 +70,7 @@ export default function NewTripPage() {
   const handleComplete = async () => {
     if (!user || !destination || !items) return;
     setGenerating(true);
+    setGenerationError(null);
 
     try {
       // Fetch weather
@@ -159,11 +162,7 @@ export default function NewTripPage() {
       router.push(`/trips/${tripId}`);
     } catch (error) {
       console.error("Failed to create trip:", error);
-      alert(
-        error instanceof Error
-          ? `Failed to create trip: ${error.message}`
-          : "Failed to create trip. Please try again.",
-      );
+      setGenerationError(getCreateTripErrorMessage(error));
     } finally {
       setGenerating(false);
     }
@@ -171,62 +170,61 @@ export default function NewTripPage() {
 
   if (generating) {
     return (
-      <div className="bg-background min-h-screen">
-        <Header />
-        <main className="mx-auto max-w-lg px-4 py-12 text-center">
-          <p className="text-lg font-medium">Generating your packing list...</p>
-          <p className="text-muted-foreground text-sm">
-            Fetching weather and calculating what you need
-          </p>
-        </main>
-      </div>
+      <AppShell className="py-12 text-center">
+        <p className="text-lg font-medium">Generating your packing list...</p>
+        <p className="text-sm text-muted-foreground">
+          Fetching weather and calculating what you need
+        </p>
+      </AppShell>
     );
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      <Header />
-      <main className="mx-auto max-w-lg px-4 py-6">
-        <WizardShell
-          steps={STEPS}
-          canProceed={canProceedForStep}
-          onComplete={handleComplete}
-        >
-          {(step) => {
-            switch (step) {
-              case 0:
-                return (
-                  <DestinationStep
-                    selected={destination}
-                    onSelect={setDestination}
-                  />
-                );
-              case 1:
-                return (
-                  <DatesStep
-                    departureDate={departureDate}
-                    returnDate={returnDate}
-                    onDepartureChange={setDepartureDate}
-                    onReturnChange={setReturnDate}
-                  />
-                );
-              case 2:
-                return (
-                  <TripTypeStep selected={tripType} onSelect={setTripType} />
-                );
-              case 3:
-                return (
-                  <TransportStep
-                    selected={transportMode}
-                    onSelect={setTransportMode}
-                  />
-                );
-              default:
-                return null;
-            }
-          }}
-        </WizardShell>
-      </main>
-    </div>
+    <AppShell>
+      {generationError && (
+        <p className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {generationError}
+        </p>
+      )}
+      <WizardShell
+        steps={STEPS}
+        canProceed={canProceedForStep}
+        onComplete={handleComplete}
+      >
+        {(step) => {
+          switch (step) {
+            case 0:
+              return (
+                <DestinationStep
+                  selected={destination}
+                  onSelect={setDestination}
+                />
+              );
+            case 1:
+              return (
+                <DatesStep
+                  departureDate={departureDate}
+                  returnDate={returnDate}
+                  onDepartureChange={setDepartureDate}
+                  onReturnChange={setReturnDate}
+                />
+              );
+            case 2:
+              return (
+                <TripTypeStep selected={tripType} onSelect={setTripType} />
+              );
+            case 3:
+              return (
+                <TransportStep
+                  selected={transportMode}
+                  onSelect={setTransportMode}
+                />
+              );
+            default:
+              return null;
+          }
+        }}
+      </WizardShell>
+    </AppShell>
   );
 }

@@ -94,7 +94,9 @@ export default function DestinationStep({
           {results.map((r) => (
             <Card
               key={r.id}
-              className="hover:bg-accent cursor-pointer transition-colors"
+              role="button"
+              tabIndex={0}
+              className="cursor-pointer transition-colors hover:bg-accent/80 active:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               onClick={() => {
                 onSelect({
                   name: `${r.name}, ${r.country}`,
@@ -103,6 +105,18 @@ export default function DestinationStep({
                 });
                 setResults([]);
                 setQuery(`${r.name}, ${r.country}`);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect({
+                    name: `${r.name}, ${r.country}`,
+                    latitude: r.latitude,
+                    longitude: r.longitude,
+                  });
+                  setResults([]);
+                  setQuery(`${r.name}, ${r.country}`);
+                }
               }}
             >
               <CardContent className="py-3">

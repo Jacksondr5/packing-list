@@ -15,7 +15,7 @@ export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {
 
   return (
     <div className="space-y-2">
-      <h3 className="text-muted-foreground text-sm font-medium">Weather</h3>
+      <h3 className="text-sm font-medium text-muted-foreground">Weather</h3>
       <div className="flex gap-2 overflow-x-auto pb-2">
         {forecasts.map((day) => (
           <div
@@ -34,7 +34,7 @@ export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {
               {Math.round(day.highTemp)}° / {Math.round(day.lowTemp)}°
             </span>
             {day.precipProbability > 0 && (
-              <span className="text-blue-500">
+              <span className="text-info-foreground">
                 {day.precipProbability}% rain
               </span>
             )}
