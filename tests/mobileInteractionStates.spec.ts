@@ -11,14 +11,14 @@ describe("mobile interaction states", () => {
     const source = read("src/components/PackingChecklist.tsx");
 
     expect(source).toContain("focus-visible:ring-2");
-    expect(source).toContain("active:bg-accent/90");
+    expect(source).toContain("active:bg-accent/80");
   });
 
   it("uses active/focus states on tappable cards", () => {
     const home = read("src/app/page.tsx");
     const settings = read("src/app/settings/page.tsx");
 
-    expect(home).toContain("group-active:bg-accent/90");
+    expect(home).toContain("group-active:scale-[0.98]");
     expect(settings).toContain("focus-visible:ring-2");
   });
 });
