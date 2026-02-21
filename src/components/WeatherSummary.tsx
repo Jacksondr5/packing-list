@@ -1,5 +1,6 @@
-import { getWeatherIconFromCode } from "@/lib/weatherIcons";
 import type { DailyForecast } from "@/lib/generatePackingList";
+import { WEATHER_CODE_CATEGORIES } from "@/lib/weatherCodes";
+import { getWeatherIconFromCode } from "@/lib/weatherIcons";
 import { cn } from "@/lib/utils";
 
 interface WeatherSummaryProps {
@@ -7,16 +8,26 @@ interface WeatherSummaryProps {
 }
 
 function getWeatherGradient(weatherCode: number): string {
-  if (weatherCode === 0) return "from-amber-900/20 to-transparent";
-  if ([1, 2, 3].includes(weatherCode)) return "from-slate-700/20 to-transparent";
-  if ([45, 48].includes(weatherCode)) return "from-slate-600/20 to-transparent";
-  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(weatherCode)) {
-    return "from-blue-800/20 to-transparent";
+  if (WEATHER_CODE_CATEGORIES.clear.includes(weatherCode)) {
+    return "from-gold-9/20 to-transparent";
   }
-  if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) return "from-sky-900/20 to-transparent";
-  if ([95, 96, 99].includes(weatherCode)) return "from-purple-900/20 to-transparent";
+  if (WEATHER_CODE_CATEGORIES.cloudy.includes(weatherCode)) {
+    return "from-sand-7/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.fog.includes(weatherCode)) {
+    return "from-sand-6/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.rain.includes(weatherCode)) {
+    return "from-sage-7/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.snow.includes(weatherCode)) {
+    return "from-sage-9/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.thunderstorm.includes(weatherCode)) {
+    return "from-terra-7/20 to-transparent";
+  }
 
-  return "from-slate-700/20 to-transparent";
+  return "from-sand-7/20 to-transparent";
 }
 
 export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {
