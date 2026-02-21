@@ -29,14 +29,21 @@ const WMO_CODES: Record<number, string> = {
   99: "Thunderstorm with heavy hail",
 };
 
-export const WEATHER_CODE_CATEGORIES = {
+export const WEATHER_CODE_CATEGORIES: {
+  clear: readonly number[];
+  cloudy: readonly number[];
+  fog: readonly number[];
+  rain: readonly number[];
+  snow: readonly number[];
+  thunderstorm: readonly number[];
+} = {
   clear: [0],
   cloudy: [1, 2, 3],
   fog: [45, 48],
   rain: [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82],
   snow: [71, 73, 75, 77, 85, 86],
   thunderstorm: [95, 96, 99],
-} as const;
+};
 
 export function getConditionFromCode(code: number): string {
   return WMO_CODES[code] ?? "Unknown";

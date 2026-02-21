@@ -7,7 +7,7 @@ import {
   Sun,
   type LucideIcon,
 } from "lucide-react";
-import { WEATHER_CODE_CATEGORIES } from "./weatherCodes";
+import { WEATHER_CODE_CATEGORIES } from "@/lib/weatherCodes";
 
 export function getWeatherIconFromCode(code: number): LucideIcon {
   if (WEATHER_CODE_CATEGORIES.clear.includes(code)) return Sun;
