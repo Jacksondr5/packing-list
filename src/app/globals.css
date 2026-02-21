@@ -9,10 +9,10 @@
     var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-display:
-    var(--font-fraunces), Georgia, "Times New Roman", serif;
+    var(--font-fraunces), "Georgia", "Times New Roman", serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
+    ui-monospace, "SFMono-Regular", "Menlo", "Monaco",
+    "Consolas", "Liberation Mono", "Courier New", monospace;
 
   /* Warm sand neutral scale */
   --color-sand-1: #151210;
@@ -156,6 +156,7 @@
   --chart-3: var(--color-ochre-9);
   --chart-4: var(--color-terra-9);
   --chart-5: var(--color-sand-9);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -206,7 +207,6 @@
   body {
     @apply bg-background text-foreground;
     overscroll-behavior: none;
-    color-scheme: dark;
     background-image: radial-gradient(
       ellipse 80% 50% at 50% -20%,
       rgba(212, 162, 78, 0.04),

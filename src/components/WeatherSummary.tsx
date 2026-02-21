@@ -1,27 +1,33 @@
+import type { DailyForecast } from "@/lib/generatePackingList";
+import { WEATHER_CODE_CATEGORIES } from "@/lib/weatherCodes";
 import { getWeatherIconFromCode } from "@/lib/weatherIcons";
 import { cn } from "@/lib/utils";
-
-interface DailyForecast {
-  date: string;
-  highTemp: number;
-  lowTemp: number;
-  precipProbability: number;
-  weatherCode: number;
-  condition: string;
-}
 
 interface WeatherSummaryProps {
   forecasts: DailyForecast[];
 }
 
 function getWeatherGradient(weatherCode: number): string {
-  if (weatherCode === 0) return "from-amber-900/20 to-transparent";
-  if (weatherCode <= 3) return "from-slate-700/20 to-transparent";
-  if (weatherCode <= 48) return "from-slate-600/20 to-transparent";
-  if (weatherCode <= 67) return "from-blue-900/20 to-transparent";
-  if (weatherCode <= 77) return "from-sky-900/20 to-transparent";
-  if (weatherCode <= 82) return "from-blue-800/20 to-transparent";
-  return "from-purple-900/20 to-transparent";
+  if (WEATHER_CODE_CATEGORIES.clear.includes(weatherCode)) {
+    return "from-gold-9/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.cloudy.includes(weatherCode)) {
+    return "from-sand-7/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.fog.includes(weatherCode)) {
+    return "from-sand-6/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.rain.includes(weatherCode)) {
+    return "from-sage-7/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.snow.includes(weatherCode)) {
+    return "from-sage-9/20 to-transparent";
+  }
+  if (WEATHER_CODE_CATEGORIES.thunderstorm.includes(weatherCode)) {
+    return "from-terra-7/20 to-transparent";
+  }
+
+  return "from-sand-7/20 to-transparent";
 }
 
 export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {

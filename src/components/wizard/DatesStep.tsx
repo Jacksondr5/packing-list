@@ -21,11 +21,14 @@ export default function DatesStep({
   const today = getLocalDateString();
   const tripDays =
     departureDate && returnDate
-      ? Math.ceil(
-          (new Date(returnDate).getTime() -
-            new Date(departureDate).getTime()) /
-            (1000 * 60 * 60 * 24),
-        ) + 1
+      ? (() => {
+          const returnTime = new Date(returnDate).getTime();
+          const departureTime = new Date(departureDate).getTime();
+
+          if (returnTime < departureTime) return null;
+
+          return Math.ceil((returnTime - departureTime) / (1000 * 60 * 60 * 24)) + 1;
+        })()
       : null;
 
   return (
