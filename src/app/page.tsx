@@ -6,8 +6,8 @@ import { Authenticated, Unauthenticated } from "convex/react";
 import { useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import { Plus, MapPin, Calendar, ChevronRight } from "lucide-react";
 
 function TripList() {
   const getOrCreateUser = useMutation(api.users.getOrCreateUser);
@@ -28,40 +28,51 @@ function TripList() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">My Trips</h2>
-        <Button asChild>
-          <Link href="/trips/new">New Trip</Link>
+        <h2 className="font-display text-2xl font-semibold tracking-tight">
+          My Trips
+        </h2>
+        <Button asChild size="sm" className="gap-1.5">
+          <Link href="/trips/new">
+            <Plus className="size-4" />
+            New Trip
+          </Link>
         </Button>
       </div>
 
       {tripsLoaded && activeTrips.length === 0 && pastTrips.length === 0 && (
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
+        <div className="rounded-2xl border border-dashed border-border/60 px-6 py-12 text-center">
+          <p className="text-muted-foreground">
             No trips yet. Create your first trip to get started!
-          </CardContent>
-        </Card>
+          </p>
+        </div>
       )}
 
       {activeTrips.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Active</h3>
+          <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Active
+          </h3>
           {activeTrips.map((trip) => (
             <Link
               key={trip._id}
               href={`/trips/${trip._id}`}
               className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              <Card className="transition-colors group-hover:bg-accent/80 group-active:bg-accent/90">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">
-                    {trip.destination}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  {trip.departureDate} - {trip.returnDate} | {trip.tripType} |{" "}
-                  {trip.transportMode}
-                </CardContent>
-              </Card>
+              <div className="flex items-center gap-4 rounded-xl border border-border/50 bg-card p-4 transition-all group-hover:border-primary/30 group-hover:bg-accent/60 group-active:scale-[0.98]">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <MapPin className="size-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{trip.destination}</p>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Calendar className="size-3.5" />
+                    <span>
+                      {trip.departureDate} — {trip.returnDate}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="size-5 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />
+              </div>
             </Link>
           ))}
         </div>
@@ -69,7 +80,7 @@ function TripList() {
 
       {pastTrips.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Past Trips
           </h3>
           {pastTrips.map((trip) => (
@@ -78,16 +89,18 @@ function TripList() {
               href={`/trips/${trip._id}`}
               className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              <Card className="opacity-60 transition-colors group-hover:bg-accent/80 group-active:bg-accent/90">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">
-                    {trip.destination}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  {trip.departureDate} - {trip.returnDate} | {trip.tripType}
-                </CardContent>
-              </Card>
+              <div className="flex items-center gap-4 rounded-xl border border-border/30 bg-card/50 p-4 opacity-60 transition-all group-hover:opacity-80 group-active:scale-[0.98]">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <MapPin className="size-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium">{trip.destination}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {trip.departureDate} — {trip.returnDate}
+                  </p>
+                </div>
+                <ChevronRight className="size-5 text-muted-foreground/30" />
+              </div>
             </Link>
           ))}
         </div>
@@ -100,11 +113,15 @@ export default function Home() {
   return (
     <AppShell>
       <Unauthenticated>
-        <div className="space-y-4 py-12 text-center">
-          <h2 className="text-2xl font-bold">Smart Packing Lists</h2>
-          <p className="text-muted-foreground">
-            Generate weather-aware packing lists for your trips. Never forget an
-            item again.
+        <div className="space-y-6 py-16 text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight">
+            Pack smarter,
+            <br />
+            travel lighter
+          </h2>
+          <p className="mx-auto max-w-xs text-muted-foreground">
+            Weather-aware packing lists that know exactly what you need. Never
+            forget an item again.
           </p>
         </div>
       </Unauthenticated>

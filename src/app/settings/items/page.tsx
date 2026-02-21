@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { SETTINGS_TRIP_TYPES } from "@/lib/tripTypes";
+import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 const CATEGORIES = [
   "Clothing",
@@ -262,7 +264,7 @@ function EditItemDialog({
             Weather Conditions
           </label>
           {form.weatherEnabled && (
-            <div className="space-y-3 rounded-md border border-muted p-3">
+            <div className="space-y-3 rounded-xl border border-muted p-3">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Temperature (°F)</Label>
@@ -336,7 +338,7 @@ function EditItemDialog({
             onClick={handleSave}
             disabled={!form.name || !form.category || saving}
           >
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
@@ -394,11 +396,24 @@ export default function ItemsSettingsPage() {
 
   return (
     <AppShell className="space-y-4">
+      <Link
+        href="/settings"
+        className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Settings
+      </Link>
+
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Item Library</h2>
+        <h2 className="font-display text-2xl font-semibold tracking-tight">
+          Item Library
+        </h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm">Add Item</Button>
+            <Button size="sm" className="gap-1.5">
+              <Plus className="size-4" />
+              Add Item
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -458,7 +473,7 @@ export default function ItemsSettingsPage() {
         {filteredItems?.map((item) => (
           <div
             key={item._id}
-            className="flex items-center justify-between rounded-lg bg-card p-3"
+            className="flex items-center justify-between rounded-xl bg-card p-3"
           >
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium">{item.name}</p>
@@ -485,17 +500,21 @@ export default function ItemsSettingsPage() {
             <div className="flex gap-1">
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
+                className="size-8"
                 onClick={() => setEditingItem(item)}
+                aria-label="Edit item"
               >
-                Edit
+                <Pencil className="size-4" />
               </Button>
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
+                className="size-8 text-destructive hover:text-destructive"
                 onClick={() => removeItem({ id: item._id })}
+                aria-label="Remove item"
               >
-                Remove
+                <Trash2 className="size-4" />
               </Button>
             </div>
           </div>

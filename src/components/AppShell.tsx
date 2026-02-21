@@ -16,7 +16,7 @@ export default function AppShell({
   showHeader = true,
 }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {showHeader && <Header />}
       <main className={cn("mx-auto w-full max-w-lg px-4 py-6", className)}>
         {children}
