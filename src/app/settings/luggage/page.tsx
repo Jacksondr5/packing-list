@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function LuggageSettingsPage() {
   const user = useQuery(api.users.getCurrentUser);
@@ -60,11 +62,24 @@ export default function LuggageSettingsPage() {
 
   return (
     <AppShell className="space-y-4">
+      <Link
+        href="/settings"
+        className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Settings
+      </Link>
+
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">My Luggage</h2>
+        <h2 className="font-display text-2xl font-semibold tracking-tight">
+          My Luggage
+        </h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button size="sm">Add Bag</Button>
+            <Button size="sm" className="gap-1.5">
+              <Plus className="size-4" />
+              Add Bag
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
@@ -137,7 +152,7 @@ export default function LuggageSettingsPage() {
         {luggageList?.map((bag) => (
           <div
             key={bag._id}
-            className="flex items-center justify-between rounded-lg bg-card p-3"
+            className="flex items-center justify-between rounded-xl bg-card p-3"
           >
             <div>
               <p className="text-sm font-medium">{bag.name}</p>

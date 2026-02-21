@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getLocalDateString } from "@/lib/date";
+import { Calendar } from "lucide-react";
 
 interface DatesStepProps {
   departureDate: string;
@@ -18,9 +19,17 @@ export default function DatesStep({
   onReturnChange,
 }: DatesStepProps) {
   const today = getLocalDateString();
+  const tripDays =
+    departureDate && returnDate
+      ? Math.ceil(
+          (new Date(returnDate).getTime() -
+            new Date(departureDate).getTime()) /
+            (1000 * 60 * 60 * 24),
+        ) + 1
+      : null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div className="space-y-2">
         <Label htmlFor="departure">Departure date</Label>
         <Input
@@ -41,15 +50,13 @@ export default function DatesStep({
           onChange={(e) => onReturnChange(e.target.value)}
         />
       </div>
-      {departureDate && returnDate && (
-        <p className="text-sm text-muted-foreground">
-          {Math.ceil(
-            (new Date(returnDate).getTime() -
-              new Date(departureDate).getTime()) /
-              (1000 * 60 * 60 * 24),
-          ) + 1}{" "}
-          days
-        </p>
+      {tripDays !== null && (
+        <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+          <Calendar className="size-4 text-primary" />
+          <span className="text-sm font-medium">
+            {tripDays} {tripDays === 1 ? "day" : "days"}
+          </span>
+        </div>
       )}
     </div>
   );

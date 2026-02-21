@@ -170,11 +170,18 @@ export default function NewTripPage() {
 
   if (generating) {
     return (
-      <AppShell className="py-12 text-center">
-        <p className="text-lg font-medium">Generating your packing list...</p>
-        <p className="text-sm text-muted-foreground">
-          Fetching weather and calculating what you need
-        </p>
+      <AppShell className="flex flex-col items-center justify-center py-16">
+        <div className="space-y-4 text-center">
+          <div className="mx-auto size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <div>
+            <p className="font-display text-lg font-medium">
+              Generating your list...
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Fetching weather and calculating what you need
+            </p>
+          </div>
+        </div>
       </AppShell>
     );
   }
@@ -182,7 +189,7 @@ export default function NewTripPage() {
   return (
     <AppShell>
       {generationError && (
-        <p className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
           {generationError}
         </p>
       )}
