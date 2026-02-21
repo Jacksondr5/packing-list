@@ -156,6 +156,7 @@
   --chart-3: var(--color-ochre-9);
   --chart-4: var(--color-terra-9);
   --chart-5: var(--color-sand-9);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -206,7 +207,6 @@
   body {
     @apply bg-background text-foreground;
     overscroll-behavior: none;
-    color-scheme: dark;
     background-image: radial-gradient(
       ellipse 80% 50% at 50% -20%,
       rgba(212, 162, 78, 0.04),

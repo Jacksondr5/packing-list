@@ -8,12 +8,15 @@ interface WeatherSummaryProps {
 
 function getWeatherGradient(weatherCode: number): string {
   if (weatherCode === 0) return "from-amber-900/20 to-transparent";
-  if (weatherCode <= 3) return "from-slate-700/20 to-transparent";
-  if (weatherCode <= 48) return "from-slate-600/20 to-transparent";
-  if (weatherCode <= 67) return "from-blue-900/20 to-transparent";
-  if (weatherCode <= 77) return "from-sky-900/20 to-transparent";
-  if (weatherCode <= 82) return "from-blue-800/20 to-transparent";
-  return "from-purple-900/20 to-transparent";
+  if ([1, 2, 3].includes(weatherCode)) return "from-slate-700/20 to-transparent";
+  if ([45, 48].includes(weatherCode)) return "from-slate-600/20 to-transparent";
+  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(weatherCode)) {
+    return "from-blue-800/20 to-transparent";
+  }
+  if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) return "from-sky-900/20 to-transparent";
+  if ([95, 96, 99].includes(weatherCode)) return "from-purple-900/20 to-transparent";
+
+  return "from-slate-700/20 to-transparent";
 }
 
 export default function WeatherSummary({ forecasts }: WeatherSummaryProps) {
