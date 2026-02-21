@@ -1,14 +1,6 @@
 import { getWeatherIconFromCode } from "@/lib/weatherIcons";
+import type { DailyForecast } from "@/lib/generatePackingList";
 import { cn } from "@/lib/utils";
-
-interface DailyForecast {
-  date: string;
-  highTemp: number;
-  lowTemp: number;
-  precipProbability: number;
-  weatherCode: number;
-  condition: string;
-}
 
 interface WeatherSummaryProps {
   forecasts: DailyForecast[];

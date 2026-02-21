@@ -9,10 +9,10 @@
     var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-display:
-    var(--font-fraunces), Georgia, "Times New Roman", serif;
+    var(--font-fraunces), "Georgia", "Times New Roman", serif;
   --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
+    ui-monospace, "SFMono-Regular", "Menlo", "Monaco",
+    "Consolas", "Liberation Mono", "Courier New", monospace;
 
   /* Warm sand neutral scale */
   --color-sand-1: #151210;

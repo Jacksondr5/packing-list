@@ -72,7 +72,7 @@ export default function DestinationStep({
       <div className="space-y-2">
         <Label htmlFor="destination">Where are you going?</Label>
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             id="destination"
             placeholder="Search for a city..."
