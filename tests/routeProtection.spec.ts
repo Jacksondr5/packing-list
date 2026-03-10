@@ -10,8 +10,15 @@ describe("isPublicPathname", () => {
     expect(isPublicPathname("/sign-in")).toBe(true);
     expect(isPublicPathname("/sign-in/sso-callback")).toBe(true);
     expect(isPublicPathname("/sign-up")).toBe(true);
+    expect(isPublicPathname("/sign-up/verify")).toBe(true);
   });
 
+
+
+  it("matches Clerk matcher semantics for auth prefixes", () => {
+    expect(isPublicPathname("/sign-infoo")).toBe(true);
+    expect(isPublicPathname("/sign-up-anything")).toBe(true);
+  });
   it("treats app pages as protected", () => {
     expect(isPublicPathname("/trips/new")).toBe(false);
     expect(isPublicPathname("/trips/abc123")).toBe(false);

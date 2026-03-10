@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { PUBLIC_ROUTE_PATTERNS } from "./src/lib/routeProtection";
+import { PUBLIC_ROUTE_PATTERNS } from "@/lib/routeProtection";
 
 const isPublicRoute = createRouteMatcher([...PUBLIC_ROUTE_PATTERNS]);
 

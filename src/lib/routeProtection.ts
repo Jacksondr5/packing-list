@@ -6,8 +6,8 @@ export const PUBLIC_ROUTE_PATTERNS = [
 
 const publicPathRegexes = [
   /^\/$/,
-  /^\/sign-in(?:\/.*)?$/,
-  /^\/sign-up(?:\/.*)?$/,
+  /^\/sign-in(.*)$/,
+  /^\/sign-up(.*)$/,
 ];
 
 export function isPublicPathname(pathname: string) {

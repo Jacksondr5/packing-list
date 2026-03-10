@@ -10,7 +10,7 @@
 
 ---
 
-### Task 1: Define route-protection policy
+## Task 1: Define route-protection policy
 
 **Files:**
 - Create: `src/lib/routeProtection.ts`
@@ -27,7 +27,7 @@ export const PUBLIC_ROUTE_PATTERNS = ["/", "/sign-in(.*)", "/sign-up(.*)"] as co
 
 Create `isPublicPathname(pathname)` so unit tests can verify the same policy without needing a full Next middleware runtime.
 
-### Task 2: Enforce auth in middleware
+## Task 2: Enforce auth in middleware
 
 **Files:**
 - Modify: `middleware.ts`
@@ -40,7 +40,7 @@ Import `createRouteMatcher` and initialize it from `PUBLIC_ROUTE_PATTERNS`.
 
 Update the middleware callback to call `await auth.protect()` whenever the current request is not public.
 
-### Task 3: Verify the policy
+## Task 3: Verify the policy
 
 **Files:**
 - Create: `tests/routeProtection.spec.ts`
