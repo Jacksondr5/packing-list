@@ -141,7 +141,7 @@ function buildItemPayload(form: ItemFormState) {
   return {
     name: form.name,
     category: form.category,
-    tripTypes: form.tripTypes,
+    tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
     quantityRule: {
       type: form.quantityRuleType,
       value: form.quantityRuleValue,
