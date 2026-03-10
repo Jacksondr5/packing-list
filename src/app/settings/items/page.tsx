@@ -116,22 +116,38 @@ function toggleTripTypeSelection(tripTypes: string[], value: string) {
 }
 
 function normalizeWeatherConditions(form: ItemFormState) {
-  const weatherConditions = form.weatherEnabled
-    ? {
-        ...(form.temperature !== ""
-          ? {
-              temperature: Number(form.temperature),
-              direction: form.temperatureDirection,
-            }
-          : {}),
-        ...(form.rain ? { rain: true as const } : {}),
-        ...(form.snow ? { snow: true as const } : {}),
-      }
-    : null;
+  if (!form.weatherEnabled) {
+    return null;
+  }
 
-  return weatherConditions && Object.keys(weatherConditions).length === 0
-    ? null
-    : weatherConditions;
+  const parsedTemperature =
+    form.temperature.trim() === "" ? null : Number(form.temperature);
+
+  const weatherConditions = {
+    ...(parsedTemperature !== null && Number.isFinite(parsedTemperature)
+      ? {
+          temperature: parsedTemperature,
+          direction: form.temperatureDirection,
+        }
+      : {}),
+    ...(form.rain ? { rain: true as const } : {}),
+    ...(form.snow ? { snow: true as const } : {}),
+  };
+
+  return Object.keys(weatherConditions).length === 0 ? null : weatherConditions;
+}
+
+function buildItemPayload(form: ItemFormState) {
+  return {
+    name: form.name,
+    category: form.category,
+    tripTypes: form.tripTypes,
+    quantityRule: {
+      type: form.quantityRuleType,
+      value: form.quantityRuleValue,
+    },
+    weatherConditions: normalizeWeatherConditions(form),
+  };
 }
 
 function ItemDialogContent({
@@ -329,7 +345,16 @@ function ItemDialogContent({
         </div>
 
         <div className="flex items-center justify-end gap-2">
-          {error && <p className="mr-auto text-sm text-destructive">{error}</p>}
+          {error && (
+            <p
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+              className="mr-auto text-sm text-destructive"
+            >
+              {error}
+            </p>
+          )}
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
@@ -363,14 +388,7 @@ function EditItemDialog({
     try {
       await updateItem({
         id: item._id,
-        name: form.name,
-        category: form.category,
-        tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
-        quantityRule: {
-          type: form.quantityRuleType,
-          value: form.quantityRuleValue,
-        },
-        weatherConditions: normalizeWeatherConditions(form),
+        ...buildItemPayload(form),
       });
       onClose();
     } catch {
@@ -412,14 +430,7 @@ function AddItemDialog({
     try {
       await createItem({
         userId,
-        name: form.name,
-        category: form.category,
-        tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
-        quantityRule: {
-          type: form.quantityRuleType,
-          value: form.quantityRuleValue,
-        },
-        weatherConditions: normalizeWeatherConditions(form),
+        ...buildItemPayload(form),
       });
       setForm(DEFAULT_NEW_ITEM_FORM);
       onClose();

@@ -10,7 +10,7 @@
 
 ---
 
-### Task 1: Share item form state between add and edit dialogs
+## Task 1: Share item form state between add and edit dialogs
 
 **Files:**
 - Modify: `src/app/settings/items/page.tsx`
@@ -31,7 +31,7 @@ Use the shared form in the add-item dialog and submit the normalized values thro
 
 Use the same form state and normalization for `api.items.update` so create/edit stay behaviorally aligned.
 
-### Task 2: Verify behavior and regressions
+## Task 2: Verify behavior and regressions
 
 **Files:**
 - Modify: `src/app/settings/items/page.tsx`
