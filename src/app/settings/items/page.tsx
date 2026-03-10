@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import type { Doc } from "../../../../convex/_generated/dataModel";
+import type { Doc, Id } from "../../../../convex/_generated/dataModel";
 import AppShell from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,7 +55,7 @@ const QUANTITY_RULE_TYPES = [
 type QuantityRuleType = "fixed" | "perDay" | "perNDays";
 type TemperatureDirection = "above" | "below";
 
-interface EditFormState {
+interface ItemFormState {
   name: string;
   category: string;
   tripTypes: string[];
@@ -68,7 +68,20 @@ interface EditFormState {
   snow: boolean;
 }
 
-function initEditForm(item: Doc<"items">): EditFormState {
+const DEFAULT_NEW_ITEM_FORM: ItemFormState = {
+  name: "",
+  category: "",
+  tripTypes: ["all"],
+  quantityRuleType: "fixed",
+  quantityRuleValue: 1,
+  weatherEnabled: false,
+  temperature: "",
+  temperatureDirection: "above",
+  rain: false,
+  snow: false,
+};
+
+function initItemForm(item: Doc<"items">): ItemFormState {
   const wc = item.weatherConditions;
   const derivedDirection: TemperatureDirection = wc?.direction ?? "above";
 
@@ -86,83 +99,73 @@ function initEditForm(item: Doc<"items">): EditFormState {
   };
 }
 
-function EditItemDialog({
-  item,
+function toggleTripTypeSelection(tripTypes: string[], value: string) {
+  if (value === "all") {
+    return tripTypes.includes("all") ? [] : ["all"];
+  }
+
+  const without = tripTypes.filter((tripType) => {
+    return tripType !== "all" && tripType !== value;
+  });
+
+  if (tripTypes.includes(value)) {
+    return without;
+  }
+
+  return [...without, value];
+}
+
+function normalizeWeatherConditions(form: ItemFormState) {
+  const weatherConditions = form.weatherEnabled
+    ? {
+        ...(form.temperature !== ""
+          ? {
+              temperature: Number(form.temperature),
+              direction: form.temperatureDirection,
+            }
+          : {}),
+        ...(form.rain ? { rain: true as const } : {}),
+        ...(form.snow ? { snow: true as const } : {}),
+      }
+    : null;
+
+  return weatherConditions && Object.keys(weatherConditions).length === 0
+    ? null
+    : weatherConditions;
+}
+
+function ItemDialogContent({
+  title,
+  form,
+  setForm,
+  saving,
+  error,
+  submitLabel,
+  onSubmit,
   onClose,
 }: {
-  item: Doc<"items">;
+  title: string;
+  form: ItemFormState;
+  setForm: Dispatch<SetStateAction<ItemFormState>>;
+  saving: boolean;
+  error: string | null;
+  submitLabel: string;
+  onSubmit: () => void | Promise<void>;
   onClose: () => void;
 }) {
-  const updateItem = useMutation(api.items.update);
-  const [form, setForm] = useState<EditFormState>(() => initEditForm(item));
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const toggleTripType = (value: string) => {
-    if (value === "all") {
-      setForm((f) => ({
-        ...f,
-        tripTypes: f.tripTypes.includes("all") ? [] : ["all"],
-      }));
-      return;
-    }
-    setForm((f) => {
-      const without = f.tripTypes.filter((t) => t !== "all" && t !== value);
-      if (f.tripTypes.includes(value)) {
-        return { ...f, tripTypes: without };
-      }
-      return { ...f, tripTypes: [...without, value] };
-    });
-  };
-
-  const handleSave = async () => {
-    const weatherConditions = form.weatherEnabled
-      ? {
-          ...(form.temperature !== ""
-            ? {
-                temperature: Number(form.temperature),
-                direction: form.temperatureDirection,
-              }
-            : {}),
-          ...(form.rain ? { rain: true as const } : {}),
-          ...(form.snow ? { snow: true as const } : {}),
-        }
-      : null;
-
-    const normalizedWeatherConditions =
-      weatherConditions && Object.keys(weatherConditions).length === 0
-        ? null
-        : weatherConditions;
-
-    setSaving(true);
-    setError(null);
-    try {
-      await updateItem({
-        id: item._id,
-        name: form.name,
-        category: form.category,
-        tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
-        quantityRule: {
-          type: form.quantityRuleType,
-          value: form.quantityRuleValue,
-        },
-        weatherConditions: normalizedWeatherConditions,
-      });
-      onClose();
-    } catch {
-      setError("Failed to save item. Please try again.");
-    } finally {
-      setSaving(false);
-    }
+    setForm((current) => ({
+      ...current,
+      tripTypes: toggleTripTypeSelection(current.tripTypes, value),
+    }));
   };
 
   return (
     <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
       <DialogHeader>
-        <DialogTitle>Edit Item</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
       <div className="space-y-5">
-        {/* Name */}
         <div className="space-y-2">
           <Label>Name</Label>
           <Input
@@ -171,7 +174,6 @@ function EditItemDialog({
           />
         </div>
 
-        {/* Category */}
         <div className="space-y-2">
           <Label>Category</Label>
           <Select
@@ -179,7 +181,7 @@ function EditItemDialog({
             onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}
           >
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
               {CATEGORIES.map((cat) => (
@@ -191,7 +193,6 @@ function EditItemDialog({
           </Select>
         </div>
 
-        {/* Quantity Rule */}
         <div className="space-y-2">
           <Label>Quantity Rule</Label>
           <Select
@@ -236,7 +237,6 @@ function EditItemDialog({
           </div>
         </div>
 
-        {/* Trip Types */}
         <div className="space-y-2">
           <Label>Trip Types</Label>
           <div className="space-y-2">
@@ -252,7 +252,6 @@ function EditItemDialog({
           </div>
         </div>
 
-        {/* Weather Conditions */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium">
             <Checkbox
@@ -329,20 +328,119 @@ function EditItemDialog({
           )}
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex items-center justify-end gap-2">
+          {error && <p className="mr-auto text-sm text-destructive">{error}</p>}
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          {error && <p className="text-sm text-destructive">{error}</p>}
           <Button
-            onClick={handleSave}
+            onClick={() => void onSubmit()}
             disabled={!form.name || !form.category || saving}
           >
-            {saving ? "Saving..." : "Save"}
+            {saving ? "Saving..." : submitLabel}
           </Button>
         </div>
       </div>
     </DialogContent>
+  );
+}
+
+function EditItemDialog({
+  item,
+  onClose,
+}: {
+  item: Doc<"items">;
+  onClose: () => void;
+}) {
+  const updateItem = useMutation(api.items.update);
+  const [form, setForm] = useState<ItemFormState>(() => initItemForm(item));
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSave = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await updateItem({
+        id: item._id,
+        name: form.name,
+        category: form.category,
+        tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
+        quantityRule: {
+          type: form.quantityRuleType,
+          value: form.quantityRuleValue,
+        },
+        weatherConditions: normalizeWeatherConditions(form),
+      });
+      onClose();
+    } catch {
+      setError("Failed to save item. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <ItemDialogContent
+      title="Edit Item"
+      form={form}
+      setForm={setForm}
+      saving={saving}
+      error={error}
+      submitLabel="Save"
+      onSubmit={handleSave}
+      onClose={onClose}
+    />
+  );
+}
+
+function AddItemDialog({
+  userId,
+  onClose,
+}: {
+  userId: Id<"users">;
+  onClose: () => void;
+}) {
+  const createItem = useMutation(api.items.create);
+  const [form, setForm] = useState<ItemFormState>(DEFAULT_NEW_ITEM_FORM);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleCreate = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await createItem({
+        userId,
+        name: form.name,
+        category: form.category,
+        tripTypes: form.tripTypes.length > 0 ? form.tripTypes : ["all"],
+        quantityRule: {
+          type: form.quantityRuleType,
+          value: form.quantityRuleValue,
+        },
+        weatherConditions: normalizeWeatherConditions(form),
+      });
+      setForm(DEFAULT_NEW_ITEM_FORM);
+      onClose();
+    } catch {
+      setError("Failed to create item. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <ItemDialogContent
+      title="Add Item"
+      form={form}
+      setForm={setForm}
+      saving={saving}
+      error={error}
+      submitLabel="Add"
+      onSubmit={handleCreate}
+      onClose={onClose}
+    />
   );
 }
 
@@ -352,11 +450,8 @@ export default function ItemsSettingsPage() {
     api.items.listByUser,
     user ? { userId: user._id } : "skip",
   );
-  const createItem = useMutation(api.items.create);
   const removeItem = useMutation(api.items.remove);
 
-  const [newName, setNewName] = useState("");
-  const [newCategory, setNewCategory] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [editingItem, setEditingItem] = useState<Doc<"items"> | null>(null);
@@ -365,21 +460,6 @@ export default function ItemsSettingsPage() {
     filterCategory === "all"
       ? items
       : items?.filter((i) => i.category === filterCategory);
-
-  const handleAdd = async () => {
-    if (!user || !newName || !newCategory) return;
-    await createItem({
-      userId: user._id,
-      name: newName,
-      category: newCategory,
-      tripTypes: ["all"],
-      weatherConditions: null,
-      quantityRule: { type: "fixed", value: 1 },
-    });
-    setNewName("");
-    setNewCategory("");
-    setDialogOpen(false);
-  };
 
   const formatQuantityRule = (rule: { type: string; value: number }) => {
     switch (rule.type) {
@@ -415,39 +495,12 @@ export default function ItemsSettingsPage() {
               Add Item
             </Button>
           </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Item</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Name</Label>
-                <Input
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="Item name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Select value={newCategory} onValueChange={setNewCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button onClick={handleAdd} disabled={!newName || !newCategory}>
-                Add
-              </Button>
-            </div>
-          </DialogContent>
+          {dialogOpen && user ? (
+            <AddItemDialog
+              userId={user._id}
+              onClose={() => setDialogOpen(false)}
+            />
+          ) : null}
         </Dialog>
       </div>
 
