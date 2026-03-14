@@ -50,7 +50,9 @@ export default function NewTripPage() {
   const [generating, setGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
   const appDataReady =
-    currentUser.status === "ready" && items !== undefined && luggage !== undefined;
+    currentUser.status === "ready" &&
+    items !== undefined &&
+    luggage !== undefined;
 
   const canProceedForStep = (step: number) => {
     switch (step) {
@@ -176,12 +178,17 @@ export default function NewTripPage() {
     }
   };
 
-  if (currentUser.status === "authLoading" || currentUser.status === "loading") {
+  if (
+    currentUser.status === "authLoading" ||
+    currentUser.status === "loading"
+  ) {
     return (
       <AppShell className="flex flex-col items-center justify-center py-16">
         <div className="space-y-3 text-center">
           <div className="mx-auto size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Loading your trip setup...</p>
+          <p className="text-sm text-muted-foreground">
+            Loading your trip setup...
+          </p>
         </div>
       </AppShell>
     );
@@ -193,6 +200,25 @@ export default function NewTripPage() {
         <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
           {currentUser.error} Refresh and try again.
         </p>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "signedOut") {
+    return (
+      <AppShell className="flex flex-col items-center justify-center py-16">
+        <div className="space-y-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            Please sign in to create a trip and generate a packing list.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push("/sign-in")}
+            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+          >
+            Sign in
+          </button>
+        </div>
       </AppShell>
     );
   }

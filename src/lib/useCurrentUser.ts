@@ -42,14 +42,17 @@ export function useCurrentUser(): UseCurrentUserResult {
 
     bootstrapRequestedRef.current = true;
 
-    void getOrCreateUser()
-      .then(() => {
+    void (async () => {
+      setBootstrapError(null);
+
+      try {
+        await getOrCreateUser();
         setBootstrapError(null);
-      })
-      .catch(() => {
+      } catch {
         bootstrapRequestedRef.current = false;
         setBootstrapError("We couldn't finish setting up your account.");
-      });
+      }
+    })();
   }, [getOrCreateUser, isLoaded, isSignedIn, user]);
 
   if (!isLoaded) {

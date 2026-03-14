@@ -462,9 +462,11 @@ export default function ItemsSettingsPage() {
   const [editingItem, setEditingItem] = useState<Doc<"items"> | null>(null);
 
   const filteredItems =
-    filterCategory === "all"
-      ? items
-      : items?.filter((i) => i.category === filterCategory);
+    items === undefined
+      ? undefined
+      : filterCategory === "all"
+        ? items
+        : items.filter((i) => i.category === filterCategory);
 
   const formatQuantityRule = (rule: { type: string; value: number }) => {
     switch (rule.type) {
@@ -479,7 +481,10 @@ export default function ItemsSettingsPage() {
     }
   };
 
-  if (currentUser.status === "authLoading" || currentUser.status === "loading") {
+  if (
+    currentUser.status === "authLoading" ||
+    currentUser.status === "loading"
+  ) {
     return (
       <AppShell className="space-y-4">
         <div className="flex items-center justify-center py-12">
@@ -495,6 +500,19 @@ export default function ItemsSettingsPage() {
         <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
           {currentUser.error} Refresh and try again.
         </p>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "signedOut") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+          Please sign in to manage your item library.
+        </p>
+        <Button asChild>
+          <Link href="/sign-in">Sign in</Link>
+        </Button>
       </AppShell>
     );
   }
@@ -520,7 +538,9 @@ export default function ItemsSettingsPage() {
               Add Item
             </Button>
           </DialogTrigger>
-          {dialogOpen ? <AddItemDialog onClose={() => setDialogOpen(false)} /> : null}
+          {dialogOpen ? (
+            <AddItemDialog onClose={() => setDialogOpen(false)} />
+          ) : null}
         </Dialog>
       </div>
 
@@ -539,7 +559,7 @@ export default function ItemsSettingsPage() {
       </Select>
 
       <p className="text-sm text-muted-foreground">
-        {filteredItems?.length ?? 0} items
+        {filteredItems ? `${filteredItems.length} items` : "Loading items..."}
       </p>
 
       <div className="space-y-1">

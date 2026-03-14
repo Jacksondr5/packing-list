@@ -36,3 +36,23 @@ export async function verifyTripOwnership(
   }
   return { user, trip };
 }
+
+export async function verifyLuggageOwnership(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+  luggageIds: Id<"luggage">[],
+) {
+  const verifiedLuggage = new Set<Id<"luggage">>();
+
+  for (const luggageId of luggageIds) {
+    if (verifiedLuggage.has(luggageId)) {
+      continue;
+    }
+
+    const bag = await ctx.db.get("luggage", luggageId);
+    if (!bag) throw new Error("Luggage not found");
+    if (bag.userId !== userId) throw new Error("Unauthorized");
+
+    verifiedLuggage.add(luggageId);
+  }
+}

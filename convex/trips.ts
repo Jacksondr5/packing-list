@@ -1,8 +1,10 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { authenticateUser, verifyTripOwnership } from "./authHelpers";
-import { Id } from "./_generated/dataModel";
-import type { MutationCtx } from "./_generated/server";
+import {
+  authenticateUser,
+  verifyLuggageOwnership,
+  verifyTripOwnership,
+} from "./authHelpers";
 
 const weatherValidator = v.union(
   v.object({
@@ -21,26 +23,6 @@ const weatherValidator = v.union(
   }),
   v.null(),
 );
-
-async function verifyLuggageOwnership(
-  ctx: MutationCtx,
-  userId: Id<"users">,
-  luggageIds: Id<"luggage">[],
-) {
-  const verifiedLuggage = new Set<Id<"luggage">>();
-
-  for (const luggageId of luggageIds) {
-    if (verifiedLuggage.has(luggageId)) {
-      continue;
-    }
-
-    const bag = await ctx.db.get("luggage", luggageId);
-    if (!bag) throw new Error("Luggage not found");
-    if (bag.userId !== userId) throw new Error("Unauthorized");
-
-    verifiedLuggage.add(luggageId);
-  }
-}
 
 export const listByUser = query({
   args: {},
