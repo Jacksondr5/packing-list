@@ -75,4 +75,4 @@ Required in `.env.local` (see `.env.local.example`):
 - `NEXT_PUBLIC_CONVEX_URL` — Convex deployment URL
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — Clerk public key
 - `CLERK_SECRET_KEY` — Clerk secret key
-- `CLERK_JWT_ISSUER_DOMAIN` — JWT issuer for Convex-Clerk integration
+- `NEXT_PUBLIC_CLERK_FRONTEND_API_URL` — Clerk Frontend API URL used by Convex-Clerk integration
