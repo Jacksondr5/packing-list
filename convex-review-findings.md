@@ -5,89 +5,58 @@ Reviewed against: `convex_rules.txt`
 ## Scope
 
 - Repository review focused on Convex backend patterns and auth/data access correctness.
-- This report summarizes review findings for a PR that also includes code changes across `convex/items.ts`, `convex/luggage.ts`, `convex/trips.ts`, `src/lib/useCurrentUser.ts`, `convex/auth.config.ts`, and related tests/docs.
+- This report summarizes the findings that originally motivated this PR and the corresponding code/docs updates now present in the branch.
 
-## Prioritized Findings
+## Status Summary
 
-### 1) **High** — Public functions accept `userId` as an argument for authorization-critical flows
+All three originally identified findings are addressed by the current PR branch. The notes below are retained as an implementation record rather than as open findings to fix after merge.
+
+## Resolved Findings
+
+### 1) **Resolved** — Authorization-critical flows previously accepted `userId` from the client
 
 **Rule reference:** Authentication guideline says: _“NEVER accept a `userId` or any user identifier as a function argument for authorization purposes. Always derive user identity server-side via `ctx.auth.getUserIdentity()`._
 
-**Where**
+**Current branch status**
 
-- `convex/items.ts:6`, `convex/items.ts:18`
-- `convex/luggage.ts:6`, `convex/luggage.ts:18`
-- `convex/trips.ts:24`, `convex/trips.ts:44`, `convex/trips.ts:73`
+- `convex/items.ts` and `convex/luggage.ts` now derive the current user server-side for user-scoped operations instead of relying on client-supplied identity.
+- `convex/trips.ts` now keeps `listByUser` on `args: {}` and derives identity server-side in `listByUser`, `create`, and `updateLuggage`.
 
-**Why this matters**
+**Outcome**
 
-- Even with ownership checks, this pattern relies on client-supplied identity context for core data reads/writes.
-- It increases attack surface and creates avoidable coupling between client and server auth semantics.
-- In `convex/trips.ts`, the remaining concern is now centered on `listByUser`; `create` and `updateLuggage` already derive identity server-side.
-- It diverges from Convex’s recommended secure design pattern and can lead to future regression risks when new endpoints are added.
-
-**Suggested remediation**
-
-- Remove `userId` from public function args for user-scoped operations.
-- In handlers, resolve current user via `ctx.auth.getUserIdentity()` (or `authenticateUser`) and use that derived `_id` for querying/inserting.
-- Keep entity-id arguments only where needed (e.g., `tripId`, `itemId`) and verify ownership server-side.
-
-**Quick win**
-
-- Start with the remaining read/list endpoints that still accept client identity (`listByUser` in items and luggage, plus `listByUser` in trips if not yet updated): replace any `args.userId` usage with server-derived user id and use `args: {}` for those list endpoints.
-- Keep the current server-derived identity flow in `create` and `updateLuggage` within `convex/trips.ts`.
+- User-scoped Convex reads/writes now follow the server-derived identity pattern required by the review guidance.
 
 ---
 
-### 2) **Medium** — Potentially incorrect Convex JWT issuer config (`auth.config.ts`)
+### 2) **Resolved** — Convex JWT issuer config needed to use the Clerk issuer domain
 
 **Rule reference:** Auth config must use JWT provider issuer domain discoverable at `{domain}/.well-known/openid-configuration`.
 
-**Where**
+**Current branch status**
 
-- `convex/auth.config.ts:4` (`domain: process.env.CLERK_JWT_ISSUER_DOMAIN`)
+- `convex/auth.config.ts` now reads `process.env.CLERK_JWT_ISSUER_DOMAIN`.
+- The config performs startup validation so missing or malformed issuer configuration fails fast during Convex auth configuration loading.
 
-**Why this matters**
+**Outcome**
 
-- If this env var points to Clerk frontend API rather than issuer URL, Convex auth verification can fail silently and `ctx.auth.getUserIdentity()` may return `null` for valid users.
-- This can produce authentication outages or confusing authorization behavior.
-
-**Suggested remediation**
-
-- Use the Clerk JWT issuer env (`CLERK_JWT_ISSUER_DOMAIN`) so Convex resolves the OIDC metadata from the issuer URL rather than the frontend API URL.
-- Validate the env at startup so local/dev misconfiguration fails fast instead of silently returning `null` from `ctx.auth.getUserIdentity()`.
-
-**Quick win**
-
-- Point `convex/auth.config.ts` at `CLERK_JWT_ISSUER_DOMAIN` and fail fast when the env is missing or not a valid URL.
+- Convex auth is configured against the Clerk JWT issuer URL instead of a frontend API URL, reducing the risk of silent auth failures.
 
 ---
 
-### 3) **Low** — ID typing weakened by string cast in `tripItems.createMany`
+### 3) **Resolved** — `tripItems.createMany` previously weakened ID typing with a string cast
 
 **Rule reference:** TypeScript guideline says be strict with Convex `Id<...>` types and avoid falling back to plain strings.
 
-**Where**
+**Current branch status**
 
-- `convex/tripItems.ts:33` (`const tripIdStr = item.tripId as string;`)
+- `convex/tripItems.ts` now keeps the trip-id dedupe flow typed with Convex ids instead of casting `item.tripId` to a plain string.
 
-**Why this matters**
+**Outcome**
 
-- Casting `Id<"trips">` to `string` weakens type guarantees and can hide future type errors.
-- This is small now but tends to spread as code evolves.
-
-**Suggested remediation**
-
-- Keep the set typed as `Set<Id<"trips">>` and store `item.tripId` directly.
-
-**Quick win**
-
-- Replace string-cast dedupe with ID-typed dedupe in-place.
-
----
+- The implementation preserves stricter Convex typing and avoids unnecessary type weakening in the dedupe path.
 
 ## Additional Observations (non-blocking)
 
 - Function registration and argument validators are consistently present across public mutations/queries/actions.
 - Query patterns generally use indexes (`withIndex`) rather than `filter`, aligning with Convex query guidance.
-- No fixes were implemented per request; this is review-only.
+- The branch includes both implementation changes and supporting test/doc updates for the reviewed areas.
