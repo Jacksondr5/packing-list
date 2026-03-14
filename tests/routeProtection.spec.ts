@@ -13,12 +13,11 @@ describe("isPublicPathname", () => {
     expect(isPublicPathname("/sign-up/verify")).toBe(true);
   });
 
-
-
-  it("matches Clerk matcher semantics for auth prefixes", () => {
-    expect(isPublicPathname("/sign-infoo")).toBe(true);
-    expect(isPublicPathname("/sign-up-anything")).toBe(true);
+  it("does not overmatch unrelated auth-like prefixes", () => {
+    expect(isPublicPathname("/sign-infoo")).toBe(false);
+    expect(isPublicPathname("/sign-up-anything")).toBe(false);
   });
+
   it("treats app pages as protected", () => {
     expect(isPublicPathname("/trips/new")).toBe(false);
     expect(isPublicPathname("/trips/abc123")).toBe(false);

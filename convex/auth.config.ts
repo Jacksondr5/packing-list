@@ -1,8 +1,10 @@
-export default {
+const authConfig = {
   providers: [
     {
-      domain: process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL,
+      domain: process.env.CLERK_JWT_ISSUER_DOMAIN,
       applicationID: "convex",
     },
   ],
 };
+
+export default authConfig;

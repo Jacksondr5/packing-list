@@ -1,6 +1,8 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { verifyUserOwnership, verifyTripOwnership } from "./authHelpers";
+import { authenticateUser, verifyTripOwnership } from "./authHelpers";
+import { Id } from "./_generated/dataModel";
+import type { MutationCtx } from "./_generated/server";
 
 const weatherValidator = v.union(
   v.object({
@@ -20,13 +22,33 @@ const weatherValidator = v.union(
   v.null(),
 );
 
+async function verifyLuggageOwnership(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+  luggageIds: Id<"luggage">[],
+) {
+  const verifiedLuggage = new Set<Id<"luggage">>();
+
+  for (const luggageId of luggageIds) {
+    if (verifiedLuggage.has(luggageId)) {
+      continue;
+    }
+
+    const bag = await ctx.db.get("luggage", luggageId);
+    if (!bag) throw new Error("Luggage not found");
+    if (bag.userId !== userId) throw new Error("Unauthorized");
+
+    verifiedLuggage.add(luggageId);
+  }
+}
+
 export const listByUser = query({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
-    await verifyUserOwnership(ctx, args.userId);
+  args: {},
+  handler: async (ctx) => {
+    const user = await authenticateUser(ctx);
     return await ctx.db
       .query("trips")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
       .collect();
   },
 });
@@ -41,7 +63,6 @@ export const getById = query({
 
 export const create = mutation({
   args: {
-    userId: v.id("users"),
     destination: v.string(),
     latitude: v.number(),
     longitude: v.number(),
@@ -53,9 +74,12 @@ export const create = mutation({
     weather: weatherValidator,
   },
   handler: async (ctx, args) => {
-    await verifyUserOwnership(ctx, args.userId);
+    const user = await authenticateUser(ctx);
+    await verifyLuggageOwnership(ctx, user._id, args.selectedLuggage);
+
     return await ctx.db.insert("trips", {
       ...args,
+      userId: user._id,
       status: "planning",
     });
   },
@@ -78,7 +102,9 @@ export const updateLuggage = mutation({
     selectedLuggage: v.array(v.id("luggage")),
   },
   handler: async (ctx, args) => {
-    await verifyTripOwnership(ctx, args.tripId);
+    const { user } = await verifyTripOwnership(ctx, args.tripId);
+    await verifyLuggageOwnership(ctx, user._id, args.selectedLuggage);
+
     await ctx.db.patch("trips", args.tripId, {
       selectedLuggage: args.selectedLuggage,
     });

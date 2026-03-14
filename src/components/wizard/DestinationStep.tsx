@@ -34,6 +34,7 @@ export default function DestinationStep({
   const [searching, setSearching] = useState(false);
   const geocode = useAction(api.weather.geocodeCity);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestRequestIdRef = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -55,14 +56,22 @@ export default function DestinationStep({
     }
 
     debounceRef.current = setTimeout(async () => {
+      const requestId = latestRequestIdRef.current + 1;
+      latestRequestIdRef.current = requestId;
       setSearching(true);
       try {
         const data = await geocode({ cityName: value });
-        setResults(data);
+        if (latestRequestIdRef.current === requestId) {
+          setResults(data);
+        }
       } catch {
-        setResults([]);
+        if (latestRequestIdRef.current === requestId) {
+          setResults([]);
+        }
       } finally {
-        setSearching(false);
+        if (latestRequestIdRef.current === requestId) {
+          setSearching(false);
+        }
       }
     }, 300);
   };

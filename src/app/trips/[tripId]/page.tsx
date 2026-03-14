@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { getTripWeatherWarning } from "@/lib/weatherWarnings";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 import {
   ArrowLeft,
   Calendar,
@@ -30,10 +31,37 @@ export default function TripDetailPage() {
   const params = useParams();
   const router = useRouter();
   const tripId = params.tripId as Id<"trips">;
+  const currentUser = useCurrentUser();
 
-  const trip = useQuery(api.trips.getById, { tripId });
-  const tripItems = useQuery(api.tripItems.listByTrip, { tripId });
+  const trip = useQuery(
+    api.trips.getById,
+    currentUser.status === "ready" ? { tripId } : "skip",
+  );
+  const tripItems = useQuery(
+    api.tripItems.listByTrip,
+    currentUser.status === "ready" ? { tripId } : "skip",
+  );
   const updateStatus = useMutation(api.trips.updateStatus);
+
+  if (currentUser.status === "authLoading" || currentUser.status === "loading") {
+    return (
+      <AppShell>
+        <div className="flex items-center justify-center py-12">
+          <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "error") {
+    return (
+      <AppShell>
+        <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {currentUser.error} Refresh and try again.
+        </p>
+      </AppShell>
+    );
+  }
 
   if (trip === undefined || tripItems === undefined) {
     return (

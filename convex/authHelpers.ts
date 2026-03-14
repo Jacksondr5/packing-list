@@ -21,21 +21,6 @@ export async function authenticateUser(
 }
 
 /**
- * Verify that the given userId belongs to the authenticated user.
- * Returns the user document on success.
- */
-export async function verifyUserOwnership(
-  ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">,
-): Promise<Doc<"users">> {
-  const user = await authenticateUser(ctx);
-  if (user._id !== userId) {
-    throw new Error("Unauthorized");
-  }
-  return user;
-}
-
-/**
  * Verify that the authenticated user owns a trip.
  * Returns both the user and trip documents on success.
  */

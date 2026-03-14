@@ -1,6 +1,7 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { authenticateUser, verifyTripOwnership } from "./authHelpers";
+import { Id } from "./_generated/dataModel";
 
 export const listByTrip = query({
   args: { tripId: v.id("trips") },
@@ -28,14 +29,13 @@ export const createMany = mutation({
   handler: async (ctx, args) => {
     // Verify ownership of all referenced trips
     const user = await authenticateUser(ctx);
-    const verifiedTrips = new Set<string>();
+    const verifiedTrips = new Set<Id<"trips">>();
     for (const item of args.items) {
-      const tripIdStr = item.tripId as string;
-      if (!verifiedTrips.has(tripIdStr)) {
+      if (!verifiedTrips.has(item.tripId)) {
         const trip = await ctx.db.get("trips", item.tripId);
         if (!trip) throw new Error("Trip not found");
         if (trip.userId !== user._id) throw new Error("Unauthorized");
-        verifiedTrips.add(tripIdStr);
+        verifiedTrips.add(item.tripId);
       }
     }
 

@@ -16,19 +16,21 @@ import {
 } from "@/lib/generatePackingList";
 import { getConditionFromCode } from "@/lib/weatherCodes";
 import { getCreateTripErrorMessage } from "@/lib/createTripError";
+import { suggestLuggage } from "@/lib/suggestLuggage";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 const STEPS = ["Destination", "Dates", "Trip Type", "Transport"];
 
 export default function NewTripPage() {
   const router = useRouter();
-  const user = useQuery(api.users.getCurrentUser);
+  const currentUser = useCurrentUser();
   const items = useQuery(
     api.items.listByUser,
-    user ? { userId: user._id } : "skip",
+    currentUser.status === "ready" ? {} : "skip",
   );
   const luggage = useQuery(
     api.luggage.listByUser,
-    user ? { userId: user._id } : "skip",
+    currentUser.status === "ready" ? {} : "skip",
   );
 
   const createTrip = useMutation(api.trips.create);
@@ -47,6 +49,8 @@ export default function NewTripPage() {
   const [transportMode, setTransportMode] = useState("");
   const [generating, setGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const appDataReady =
+    currentUser.status === "ready" && items !== undefined && luggage !== undefined;
 
   const canProceedForStep = (step: number) => {
     switch (step) {
@@ -61,14 +65,18 @@ export default function NewTripPage() {
       case 2:
         return tripType !== "";
       case 3:
-        return transportMode !== "";
+        return transportMode !== "" && appDataReady && !generating;
       default:
         return false;
     }
   };
 
   const handleComplete = async () => {
-    if (!user || !destination || !items) return;
+    if (!appDataReady || !destination || !items || !luggage) {
+      setGenerationError("Your trip data is still loading. Please try again.");
+      return;
+    }
+
     setGenerating(true);
     setGenerationError(null);
 
@@ -107,21 +115,28 @@ export default function NewTripPage() {
         // Weather fetch failed — proceed without weather
       }
 
-      // Suggest luggage
-      const compatibleLuggage = (luggage ?? []).filter((bag) =>
-        bag.transportModes.includes(transportMode),
-      );
-      const selectedLuggage = compatibleLuggage.map((bag) => bag._id);
-
-      // Create trip
       const tripDays =
         Math.ceil(
           (new Date(returnDate).getTime() - new Date(departureDate).getTime()) /
             (1000 * 60 * 60 * 24),
         ) + 1;
 
+      const packingList = generatePackingList(items, {
+        tripType,
+        tripDays,
+        weather,
+      });
+      const totalItemCount = packingList.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      );
+      const selectedLuggage = suggestLuggage(
+        luggage,
+        transportMode,
+        totalItemCount,
+      ).map((bag) => bag._id);
+
       const tripId = await createTrip({
-        userId: user._id,
         destination: destination.name,
         latitude: destination.latitude,
         longitude: destination.longitude,
@@ -134,13 +149,6 @@ export default function NewTripPage() {
       });
 
       try {
-        // Generate packing list
-        const packingList = generatePackingList(items, {
-          tripType,
-          tripDays,
-          weather,
-        });
-
         // Save trip items
         if (packingList.length > 0) {
           await createTripItems({
@@ -168,6 +176,27 @@ export default function NewTripPage() {
     }
   };
 
+  if (currentUser.status === "authLoading" || currentUser.status === "loading") {
+    return (
+      <AppShell className="flex flex-col items-center justify-center py-16">
+        <div className="space-y-3 text-center">
+          <div className="mx-auto size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <p className="text-sm text-muted-foreground">Loading your trip setup...</p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "error") {
+    return (
+      <AppShell>
+        <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {currentUser.error} Refresh and try again.
+        </p>
+      </AppShell>
+    );
+  }
+
   if (generating) {
     return (
       <AppShell className="flex flex-col items-center justify-center py-16">
@@ -191,6 +220,11 @@ export default function NewTripPage() {
       {generationError && (
         <p className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
           {generationError}
+        </p>
+      )}
+      {!appDataReady && (
+        <p className="mb-4 rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+          Loading your items and luggage before we generate the list.
         </p>
       )}
       <WizardShell
