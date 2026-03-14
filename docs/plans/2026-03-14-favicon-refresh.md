@@ -1,6 +1,6 @@
 # Favicon Refresh Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+> Implementation note: execute tasks sequentially and validate outputs after each task.
 
 **Goal:** Replace the blue favicon with a warm-toned vintage trunk icon and provide a rugged comparison variant.
 
@@ -13,6 +13,7 @@
 ## Task 1: Capture the approved vintage trunk favicon system
 
 **Files:**
+
 - Modify: `src/app/icon.svg`
 - Create: `public/favicon-vintage-rugged.svg`
 
@@ -35,9 +36,10 @@ Create `public/favicon-vintage-rugged.svg` with the same trunk silhouette but da
 ## Task 2: Generate review artifacts
 
 **Files:**
-- Create: `tmp/favicon-warm-tile.png`
-- Create: `tmp/favicon-transparent.png`
-- Create: `tmp/favicon-comparison.html`
+
+- Create: `tmp/favicon-preview/favicon-polished.png`
+- Create: `tmp/favicon-preview/favicon-rugged.png`
+- Create: `tmp/favicon-preview/comparison.html`
 
 **Step 1: Rasterize both SVGs**
 
@@ -54,6 +56,7 @@ Render the board and capture a screenshot image so the two options can be shown 
 ## Task 3: Verify asset wiring
 
 **Files:**
+
 - Inspect: `src/app/layout.tsx`
 
 **Step 1: Confirm metadata still points at `/icon.svg`**
