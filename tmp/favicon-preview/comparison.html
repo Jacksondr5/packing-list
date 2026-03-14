@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Favicon Comparison</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #ede5d8;
+        --muted: #c4b69e;
+        --panel: #1c1914;
+        --panel-2: #24201a;
+        --border: #544c40;
+        --gold: #d4a24e;
+        --paper: #f6ead8;
+        --shadow: rgba(0, 0, 0, 0.24);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(
+            circle at top,
+            rgba(212, 162, 78, 0.18),
+            transparent 42%
+          ),
+          linear-gradient(180deg, #151210 0%, #1c1914 100%);
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 48px 32px 64px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 42px;
+        line-height: 1.05;
+      }
+
+      p {
+        margin: 0 0 32px;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(36, 32, 26, 0.92),
+          rgba(28, 25, 20, 0.96)
+        );
+        border: 1px solid rgba(84, 76, 64, 0.8);
+        border-radius: 28px;
+        padding: 24px;
+        box-shadow: 0 24px 60px var(--shadow);
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 24px;
+      }
+
+      .label {
+        display: inline-block;
+        margin-bottom: 18px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(212, 162, 78, 0.14);
+        color: #f5deb2;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .hero {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 260px;
+        margin-bottom: 20px;
+        border-radius: 24px;
+        background:
+          radial-gradient(
+            circle at top,
+            rgba(255, 255, 255, 0.06),
+            transparent 52%
+          ),
+          linear-gradient(180deg, #302920 0%, #221d17 100%);
+      }
+
+      .hero img {
+        width: 168px;
+        height: 168px;
+      }
+
+      .tabs {
+        display: grid;
+        gap: 14px;
+      }
+
+      .tab-strip {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 16px;
+        border: 1px solid rgba(84, 76, 64, 0.8);
+      }
+
+      .tab-strip.light {
+        background: #f4ece0;
+        color: #4d301d;
+      }
+
+      .tab-strip.dark {
+        background: #1a1612;
+      }
+
+      .fav-32 {
+        width: 32px;
+        height: 32px;
+      }
+
+      .fav-16 {
+        width: 16px;
+        height: 16px;
+      }
+
+      .tab-title {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .tab-mini {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        opacity: 0.8;
+        font-size: 12px;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>PackPal favicon directions</h1>
+      <p>
+        Both options use the same simple vintage trunk silhouette. The
+        difference is whether the finish feels more polished or more rugged.
+      </p>
+
+      <section class="grid">
+        <article class="card">
+          <div class="label">Option A</div>
+          <h2>Polished vintage trunk</h2>
+          <div class="hero">
+            <img
+              src="./favicon-polished.png"
+              alt="Polished vintage trunk favicon"
+              width="168"
+              height="168"
+            />
+          </div>
+          <div class="tabs">
+            <div class="tab-strip light">
+              <img
+                class="fav-32"
+                src="./favicon-polished.png"
+                alt=""
+                width="32"
+                height="32"
+              />
+              <span class="tab-title">PackPal</span>
+              <span class="tab-mini">
+                <img
+                  class="fav-16"
+                  src="./favicon-polished.png"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                16px
+              </span>
+            </div>
+            <div class="tab-strip dark">
+              <img
+                class="fav-32"
+                src="./favicon-polished.png"
+                alt=""
+                width="32"
+                height="32"
+              />
+              <span class="tab-title">PackPal</span>
+              <span class="tab-mini">
+                <img
+                  class="fav-16"
+                  src="./favicon-polished.png"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                16px
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="label">Option B</div>
+          <h2>Rugged vintage trunk</h2>
+          <div class="hero">
+            <img
+              src="./favicon-rugged.png"
+              alt="Rugged vintage trunk favicon"
+              width="168"
+              height="168"
+            />
+          </div>
+          <div class="tabs">
+            <div class="tab-strip light">
+              <img
+                class="fav-32"
+                src="./favicon-rugged.png"
+                alt=""
+                width="32"
+                height="32"
+              />
+              <span class="tab-title">PackPal</span>
+              <span class="tab-mini">
+                <img
+                  class="fav-16"
+                  src="./favicon-rugged.png"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                16px
+              </span>
+            </div>
+            <div class="tab-strip dark">
+              <img
+                class="fav-32"
+                src="./favicon-rugged.png"
+                alt=""
+                width="32"
+                height="32"
+              />
+              <span class="tab-title">PackPal</span>
+              <span class="tab-mini">
+                <img
+                  class="fav-16"
+                  src="./favicon-rugged.png"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                16px
+              </span>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
