@@ -40,18 +40,24 @@ Create `public/favicon-vintage-rugged.svg` with the same trunk silhouette but da
 - Create: `tmp/favicon-preview/favicon-polished.png`
 - Create: `tmp/favicon-preview/favicon-rugged.png`
 - Create: `tmp/favicon-preview/comparison.html`
+- Create: `tmp/favicon-preview/comparison-screenshot.png`
 
 **Step 1: Rasterize both SVGs**
 
-Run `sips -s format png` for the primary and alternate SVGs so they can be viewed directly and used in a comparison board.
+Run:
+
+- `sips -s format png src/app/icon.svg --out tmp/favicon-preview/favicon-polished.png`
+- `sips -s format png public/favicon-vintage-rugged.svg --out tmp/favicon-preview/favicon-rugged.png`
 
 **Step 2: Build a simple comparison board**
 
-Create a temporary HTML file that places both PNGs on dark, light, and tab-like backgrounds to verify contrast.
+Create `tmp/favicon-preview/comparison.html` that loads `./favicon-polished.png` and `./favicon-rugged.png` in matching sections for dark, light, and tab-like backgrounds so both variants can be compared in a deterministic layout.
 
 **Step 3: Capture a screenshot for review**
 
-Render the board and capture a screenshot image so the two options can be shown in this session.
+Render the board and save a screenshot as `tmp/favicon-preview/comparison-screenshot.png` with:
+
+- `npx playwright screenshot --device="Desktop Chrome HiDPI" file://$PWD/tmp/favicon-preview/comparison.html tmp/favicon-preview/comparison-screenshot.png`
 
 ## Task 3: Verify asset wiring
 
