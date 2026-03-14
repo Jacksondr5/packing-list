@@ -1,24 +1,8 @@
-const issuerDomain = process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL;
-
-if (!issuerDomain) {
-  throw new Error(
-    "Missing NEXT_PUBLIC_CLERK_FRONTEND_API_URL for Convex auth configuration.",
-  );
-}
-
-try {
-  new URL(issuerDomain);
-} catch {
-  throw new Error(`Invalid NEXT_PUBLIC_CLERK_FRONTEND_API_URL: ${issuerDomain}`);
-}
-
-const authConfig = {
+export default {
   providers: [
     {
-      domain: issuerDomain,
+      domain: process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL,
       applicationID: "convex",
     },
   ],
 };
-
-export default authConfig;
