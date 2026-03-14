@@ -16,7 +16,7 @@ PackPal — a weather-aware packing list generator built with Next.js 16 (App Ro
 - `pnpm convex deploy` — deploy Convex functions to production
 - `pnpm shadcn@latest add <component>` — add new ShadCN UI components
 
-No test framework is currently configured.
+Unit tests are configured with Vitest (`pnpm test`).
 
 ## Architecture
 
