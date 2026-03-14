@@ -34,6 +34,7 @@ export default function DestinationStep({
   const [searching, setSearching] = useState(false);
   const geocode = useAction(api.weather.geocodeCity);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestRequestIdRef = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -48,6 +49,9 @@ export default function DestinationStep({
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
+
+    const requestId = ++latestRequestIdRef.current;
+
     if (value.length < 2) {
       setResults([]);
       setSearching(false);
@@ -58,11 +62,17 @@ export default function DestinationStep({
       setSearching(true);
       try {
         const data = await geocode({ cityName: value });
-        setResults(data);
+        if (latestRequestIdRef.current === requestId) {
+          setResults(data);
+        }
       } catch {
-        setResults([]);
+        if (latestRequestIdRef.current === requestId) {
+          setResults([]);
+        }
       } finally {
-        setSearching(false);
+        if (latestRequestIdRef.current === requestId) {
+          setSearching(false);
+        }
       }
     }, 300);
   };
@@ -72,7 +82,7 @@ export default function DestinationStep({
       <div className="space-y-2">
         <Label htmlFor="destination">Where are you going?</Label>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             id="destination"
             placeholder="Search for a city..."
@@ -106,7 +116,7 @@ export default function DestinationStep({
               key={r.id}
               role="button"
               tabIndex={0}
-              className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-3 transition-all hover:bg-accent/60 active:scale-[0.99] active:bg-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-3 transition-all hover:bg-accent/60 focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:scale-[0.99] active:bg-accent/80"
               onClick={() => {
                 onSelect({
                   name: `${r.name}, ${r.country}`,

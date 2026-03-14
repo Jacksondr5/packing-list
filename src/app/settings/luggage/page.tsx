@@ -25,12 +25,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Plus } from "lucide-react";
 import Link from "next/link";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 export default function LuggageSettingsPage() {
-  const user = useQuery(api.users.getCurrentUser);
+  const currentUser = useCurrentUser();
   const luggageList = useQuery(
     api.luggage.listByUser,
-    user ? { userId: user._id } : "skip",
+    currentUser.status === "ready" ? {} : "skip",
   );
   const createLuggage = useMutation(api.luggage.create);
   const removeLuggage = useMutation(api.luggage.remove);
@@ -47,9 +48,8 @@ export default function LuggageSettingsPage() {
   };
 
   const handleAdd = async () => {
-    if (!user || !name || modes.length === 0) return;
+    if (currentUser.status !== "ready" || !name || modes.length === 0) return;
     await createLuggage({
-      userId: user._id,
       name,
       transportModes: modes,
       size,
@@ -59,6 +59,39 @@ export default function LuggageSettingsPage() {
     setModes([]);
     setDialogOpen(false);
   };
+
+  if (currentUser.status === "authLoading" || currentUser.status === "loading") {
+    return (
+      <AppShell className="space-y-4">
+        <div className="flex items-center justify-center py-12">
+          <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "error") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {currentUser.error} Refresh and try again.
+        </p>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "signedOut") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+          Please sign in to manage your luggage.
+        </p>
+        <Button asChild>
+          <Link href="/sign-in">Sign in</Link>
+        </Button>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell className="space-y-4">
@@ -132,7 +165,7 @@ export default function LuggageSettingsPage() {
               </div>
               <Button
                 onClick={handleAdd}
-                disabled={!user || !name || modes.length === 0}
+                disabled={currentUser.status !== "ready" || !name || modes.length === 0}
               >
                 Add
               </Button>

@@ -96,11 +96,10 @@ export default function PackingChecklist({
             </div>
             <div className="space-y-1">
               {categoryItems.map((item) => (
-                <div
+                <button
+                  type="button"
                   key={item._id}
-                  role="button"
-                  tabIndex={readOnly ? -1 : 0}
-                  aria-disabled={readOnly}
+                  disabled={readOnly}
                   aria-pressed={item.packed}
                   className={cn(
                     "flex w-full select-none items-center gap-3 rounded-xl px-3 py-3.5 text-left transition-all duration-200",
@@ -113,13 +112,6 @@ export default function PackingChecklist({
                   )}
                   onClick={() => {
                     if (!readOnly) togglePacked({ id: item._id });
-                  }}
-                  onKeyDown={(e) => {
-                    if (readOnly) return;
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      togglePacked({ id: item._id });
-                    }
                   }}
                 >
                   {/* Custom checkbox */}
@@ -148,7 +140,7 @@ export default function PackingChecklist({
                       x{item.quantity}
                     </span>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>

@@ -1,21 +1,20 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { authenticateUser, verifyUserOwnership } from "./authHelpers";
+import { authenticateUser } from "./authHelpers";
 
 export const listByUser = query({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
-    await verifyUserOwnership(ctx, args.userId);
+  args: {},
+  handler: async (ctx) => {
+    const user = await authenticateUser(ctx);
     return await ctx.db
       .query("items")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
       .collect();
   },
 });
 
 export const create = mutation({
   args: {
-    userId: v.id("users"),
     name: v.string(),
     category: v.string(),
     tripTypes: v.array(v.string()),
@@ -38,8 +37,11 @@ export const create = mutation({
     }),
   },
   handler: async (ctx, args) => {
-    await verifyUserOwnership(ctx, args.userId);
-    return await ctx.db.insert("items", args);
+    const user = await authenticateUser(ctx);
+    return await ctx.db.insert("items", {
+      ...args,
+      userId: user._id,
+    });
   },
 });
 

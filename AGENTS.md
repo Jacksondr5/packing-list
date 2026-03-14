@@ -16,7 +16,7 @@ PackPal — a weather-aware packing list generator built with Next.js 16 (App Ro
 - `pnpm convex deploy` — deploy Convex functions to production
 - `pnpm shadcn@latest add <component>` — add new ShadCN UI components
 
-No test framework is currently configured.
+Unit tests are configured with Vitest (`pnpm test`).
 
 ## Architecture
 
@@ -74,5 +74,5 @@ Required in `.env.local` (see `.env.local.example`):
 
 - `NEXT_PUBLIC_CONVEX_URL` — Convex deployment URL
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — Clerk public key
+- `NEXT_PUBLIC_CLERK_FRONTEND_API_URL` — Clerk Frontend API URL used by Convex auth.config.ts
 - `CLERK_SECRET_KEY` — Clerk secret key
-- `CLERK_JWT_ISSUER_DOMAIN` — JWT issuer for Convex-Clerk integration

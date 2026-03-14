@@ -3,7 +3,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
-import type { Doc, Id } from "../../../../convex/_generated/dataModel";
+import type { Doc } from "../../../../convex/_generated/dataModel";
 import AppShell from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { SETTINGS_TRIP_TYPES } from "@/lib/tripTypes";
 import { ArrowLeft, Plus, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 const CATEGORIES = [
   "Clothing",
@@ -412,13 +413,7 @@ function EditItemDialog({
   );
 }
 
-function AddItemDialog({
-  userId,
-  onClose,
-}: {
-  userId: Id<"users">;
-  onClose: () => void;
-}) {
+function AddItemDialog({ onClose }: { onClose: () => void }) {
   const createItem = useMutation(api.items.create);
   const [form, setForm] = useState<ItemFormState>(DEFAULT_NEW_ITEM_FORM);
   const [saving, setSaving] = useState(false);
@@ -429,7 +424,6 @@ function AddItemDialog({
     setError(null);
     try {
       await createItem({
-        userId,
         ...buildItemPayload(form),
       });
       setForm(DEFAULT_NEW_ITEM_FORM);
@@ -456,10 +450,10 @@ function AddItemDialog({
 }
 
 export default function ItemsSettingsPage() {
-  const user = useQuery(api.users.getCurrentUser);
+  const currentUser = useCurrentUser();
   const items = useQuery(
     api.items.listByUser,
-    user ? { userId: user._id } : "skip",
+    currentUser.status === "ready" ? {} : "skip",
   );
   const removeItem = useMutation(api.items.remove);
 
@@ -468,9 +462,11 @@ export default function ItemsSettingsPage() {
   const [editingItem, setEditingItem] = useState<Doc<"items"> | null>(null);
 
   const filteredItems =
-    filterCategory === "all"
-      ? items
-      : items?.filter((i) => i.category === filterCategory);
+    items === undefined
+      ? undefined
+      : filterCategory === "all"
+        ? items
+        : items.filter((i) => i.category === filterCategory);
 
   const formatQuantityRule = (rule: { type: string; value: number }) => {
     switch (rule.type) {
@@ -484,6 +480,42 @@ export default function ItemsSettingsPage() {
         return String(rule.value);
     }
   };
+
+  if (
+    currentUser.status === "authLoading" ||
+    currentUser.status === "loading"
+  ) {
+    return (
+      <AppShell className="space-y-4">
+        <div className="flex items-center justify-center py-12">
+          <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "error") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {currentUser.error} Refresh and try again.
+        </p>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "signedOut") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+          Please sign in to manage your item library.
+        </p>
+        <Button asChild>
+          <Link href="/sign-in">Sign in</Link>
+        </Button>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell className="space-y-4">
@@ -506,11 +538,8 @@ export default function ItemsSettingsPage() {
               Add Item
             </Button>
           </DialogTrigger>
-          {dialogOpen && user ? (
-            <AddItemDialog
-              userId={user._id}
-              onClose={() => setDialogOpen(false)}
-            />
+          {dialogOpen ? (
+            <AddItemDialog onClose={() => setDialogOpen(false)} />
           ) : null}
         </Dialog>
       </div>
@@ -530,7 +559,7 @@ export default function ItemsSettingsPage() {
       </Select>
 
       <p className="text-sm text-muted-foreground">
-        {filteredItems?.length ?? 0} items
+        {filteredItems ? `${filteredItems.length} items` : "Loading items..."}
       </p>
 
       <div className="space-y-1">

@@ -21,21 +21,6 @@ export async function authenticateUser(
 }
 
 /**
- * Verify that the given userId belongs to the authenticated user.
- * Returns the user document on success.
- */
-export async function verifyUserOwnership(
-  ctx: QueryCtx | MutationCtx,
-  userId: Id<"users">,
-): Promise<Doc<"users">> {
-  const user = await authenticateUser(ctx);
-  if (user._id !== userId) {
-    throw new Error("Unauthorized");
-  }
-  return user;
-}
-
-/**
  * Verify that the authenticated user owns a trip.
  * Returns both the user and trip documents on success.
  */
@@ -50,4 +35,24 @@ export async function verifyTripOwnership(
     throw new Error("Unauthorized");
   }
   return { user, trip };
+}
+
+export async function verifyLuggageOwnership(
+  ctx: MutationCtx,
+  userId: Id<"users">,
+  luggageIds: Id<"luggage">[],
+) {
+  const verifiedLuggage = new Set<Id<"luggage">>();
+
+  for (const luggageId of luggageIds) {
+    if (verifiedLuggage.has(luggageId)) {
+      continue;
+    }
+
+    const bag = await ctx.db.get("luggage", luggageId);
+    if (!bag) throw new Error("Luggage not found");
+    if (bag.userId !== userId) throw new Error("Unauthorized");
+
+    verifiedLuggage.add(luggageId);
+  }
 }

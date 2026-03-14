@@ -1,5 +1,7 @@
+import type { Id } from "../../convex/_generated/dataModel";
+
 interface LuggageItem {
-  _id: string;
+  _id: Id<"luggage">;
   name: string;
   transportModes: string[];
   size: "small" | "medium" | "large";

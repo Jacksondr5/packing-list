@@ -1,25 +1,36 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Authenticated, Unauthenticated } from "convex/react";
-import { useEffect } from "react";
 import AppShell from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus, MapPin, Calendar, ChevronRight } from "lucide-react";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 function TripList() {
-  const getOrCreateUser = useMutation(api.users.getOrCreateUser);
-  const user = useQuery(api.users.getCurrentUser);
+  const currentUser = useCurrentUser();
   const trips = useQuery(
     api.trips.listByUser,
-    user ? { userId: user._id } : "skip",
+    currentUser.status === "ready" ? {} : "skip",
   );
 
-  useEffect(() => {
-    getOrCreateUser();
-  }, [getOrCreateUser]);
+  if (currentUser.status === "authLoading" || currentUser.status === "loading") {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (currentUser.status === "error") {
+    return (
+      <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+        {currentUser.error} Refresh and try again.
+      </p>
+    );
+  }
 
   const tripsLoaded = trips !== undefined;
   const activeTrips = trips?.filter((t) => t.status !== "completed") ?? [];
