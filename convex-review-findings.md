@@ -17,12 +17,13 @@ Reviewed against: `convex_rules.txt`
 
 - `convex/items.ts:6`, `convex/items.ts:18`
 - `convex/luggage.ts:6`, `convex/luggage.ts:18`
-- `convex/trips.ts:24`, `convex/trips.ts:44`
+- `convex/trips.ts:24`, `convex/trips.ts:44`, `convex/trips.ts:73`
 
 **Why this matters**
 
 - Even with ownership checks, this pattern relies on client-supplied identity context for core data reads/writes.
 - It increases attack surface and creates avoidable coupling between client and server auth semantics.
+- In `convex/trips.ts`, the remaining concern is now centered on `listByUser`; `create` and `updateLuggage` already derive identity server-side.
 - It diverges from Convex’s recommended secure design pattern and can lead to future regression risks when new endpoints are added.
 
 **Suggested remediation**
@@ -33,7 +34,8 @@ Reviewed against: `convex_rules.txt`
 
 **Quick win**
 
-- Start with read/list endpoints (`listByUser` in items/luggage/trips): replace `args.userId` with server-derived user id and make `args: {}`.
+- Start with the remaining read/list endpoints that still accept client identity (`listByUser` in items and luggage, plus `listByUser` in trips if not yet updated): replace any `args.userId` usage with server-derived user id and use `args: {}` for those list endpoints.
+- Keep the current server-derived identity flow in `create` and `updateLuggage` within `convex/trips.ts`.
 
 ---
 

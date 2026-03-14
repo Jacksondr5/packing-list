@@ -80,6 +80,19 @@ export default function LuggageSettingsPage() {
     );
   }
 
+  if (currentUser.status === "signedOut") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+          Please sign in to manage your luggage.
+        </p>
+        <Button asChild>
+          <Link href="/sign-in">Sign in</Link>
+        </Button>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell className="space-y-4">
       <Link

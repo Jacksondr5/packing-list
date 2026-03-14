@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { getTripWeatherWarning } from "@/lib/weatherWarnings";
 import { useCurrentUser } from "@/lib/useCurrentUser";
+import Link from "next/link";
 import {
   ArrowLeft,
   Calendar,
@@ -59,6 +60,19 @@ export default function TripDetailPage() {
         <p className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
           {currentUser.error} Refresh and try again.
         </p>
+      </AppShell>
+    );
+  }
+
+  if (currentUser.status === "signedOut") {
+    return (
+      <AppShell className="space-y-4">
+        <p className="rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground">
+          Please sign in to view this trip.
+        </p>
+        <Button asChild>
+          <Link href="/sign-in">Sign in</Link>
+        </Button>
       </AppShell>
     );
   }
