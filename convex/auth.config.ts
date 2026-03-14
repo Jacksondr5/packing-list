@@ -1,7 +1,19 @@
+const issuerDomain = process.env.CLERK_JWT_ISSUER_DOMAIN;
+
+if (!issuerDomain) {
+  throw new Error("Missing CLERK_JWT_ISSUER_DOMAIN for Convex auth configuration.");
+}
+
+try {
+  new URL(issuerDomain);
+} catch {
+  throw new Error(`Invalid CLERK_JWT_ISSUER_DOMAIN: ${issuerDomain}`);
+}
+
 const authConfig = {
   providers: [
     {
-      domain: process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL,
+      domain: issuerDomain,
       applicationID: "convex",
     },
   ],

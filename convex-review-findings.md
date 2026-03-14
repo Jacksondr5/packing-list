@@ -5,7 +5,7 @@ Reviewed against: `convex_rules.txt`
 ## Scope
 
 - Repository review focused on Convex backend patterns and auth/data access correctness.
-- No code changes implemented.
+- This report summarizes review findings for a PR that also includes code changes across `convex/items.ts`, `convex/luggage.ts`, `convex/trips.ts`, `src/lib/useCurrentUser.ts`, `convex/auth.config.ts`, and related tests/docs.
 
 ## Prioritized Findings
 
@@ -45,7 +45,7 @@ Reviewed against: `convex_rules.txt`
 
 **Where**
 
-- `convex/auth.config.ts:4` (`domain: process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL`)
+- `convex/auth.config.ts:4` (`domain: process.env.CLERK_JWT_ISSUER_DOMAIN`)
 
 **Why this matters**
 
@@ -54,12 +54,12 @@ Reviewed against: `convex_rules.txt`
 
 **Suggested remediation**
 
-- Confirm the env var resolves to Clerk’s JWT issuer URL (OIDC issuer), not a frontend-only endpoint.
-- Prefer a clearly named issuer env (e.g., `CLERK_ISSUER_URL`) to avoid configuration ambiguity.
+- Use the Clerk JWT issuer env (`CLERK_JWT_ISSUER_DOMAIN`) so Convex resolves the OIDC metadata from the issuer URL rather than the frontend API URL.
+- Validate the env at startup so local/dev misconfiguration fails fast instead of silently returning `null` from `ctx.auth.getUserIdentity()`.
 
 **Quick win**
 
-- Add startup/deploy validation (or a short README note) documenting the exact expected issuer format.
+- Point `convex/auth.config.ts` at `CLERK_JWT_ISSUER_DOMAIN` and fail fast when the env is missing or not a valid URL.
 
 ---
 
