@@ -28,18 +28,18 @@ All three originally identified findings are addressed by the current PR branch.
 
 ---
 
-### 2) **Resolved** — Convex JWT issuer config needed to use the Clerk issuer domain
+### 2) **Resolved** — Convex auth config now points at the Clerk Frontend API URL used in this repo
 
 **Rule reference:** Auth config must use JWT provider issuer domain discoverable at `{domain}/.well-known/openid-configuration`.
 
 **Current branch status**
 
-- `convex/auth.config.ts` now reads `process.env.CLERK_JWT_ISSUER_DOMAIN`.
+- `convex/auth.config.ts` now reads `process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL`.
 - The config performs startup validation so missing or malformed issuer configuration fails fast during Convex auth configuration loading.
 
 **Outcome**
 
-- Convex auth is configured against the Clerk JWT issuer URL instead of a frontend API URL, reducing the risk of silent auth failures.
+- Convex auth is configured against the Clerk Frontend API URL used by the rest of the repo, reducing config drift across setup files.
 
 ---
 

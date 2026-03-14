@@ -24,7 +24,7 @@ describe("PackingChecklist markup", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: /shirt/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /shirt/i })).not.toBeNull();
   });
 
   it("disables checklist rows when read only", () => {
@@ -43,6 +43,8 @@ describe("PackingChecklist markup", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: /passport/i })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /passport/i }).hasAttribute("disabled"),
+    ).toBe(true);
   });
 });

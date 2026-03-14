@@ -74,9 +74,5 @@ Required in `.env.local` (see `.env.local.example`):
 
 - `NEXT_PUBLIC_CONVEX_URL` — Convex deployment URL
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` — Clerk public key
+- `NEXT_PUBLIC_CLERK_FRONTEND_API_URL` — Clerk Frontend API URL used by Convex auth.config.ts
 - `CLERK_SECRET_KEY` — Clerk secret key
-- `CLERK_JWT_ISSUER_DOMAIN` — Clerk JWT issuer URL used by Convex auth.config.ts
-
-Optional / advanced Clerk config:
-
-- `NEXT_PUBLIC_CLERK_FRONTEND_API_URL` — Override for the Clerk Frontend API URL when your setup explicitly needs it
